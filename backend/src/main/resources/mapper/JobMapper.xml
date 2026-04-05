@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.offerflow.mapper.JobMapper">
+
+    <resultMap id="JobResultMap" type="com.offerflow.entity.Job">
+        <id property="id" column="id"/>
+        <result property="subsidiaryId" column="subsidiary_id"/>
+        <result property="jobCategoryId" column="job_category_id"/>
+        <result property="title" column="title"/>
+        <result property="company" column="company"/>
+        <result property="city" column="city"/>
+        <result property="category" column="category"/>
+        <result property="type" column="type"/>
+        <result property="businessLine" column="business_line"/>
+        <result property="provinceCode" column="province_code"/>
+        <result property="cityCode" column="city_code"/>
+        <result property="workMode" column="work_mode"/>
+        <result property="durationType" column="duration_type"/>
+        <result property="internshipLength" column="internship_length"/>
+        <result property="requiredSkillsJson" column="required_skills_json"/>
+        <result property="tags" column="tags"/>
+        <result property="salaryMin" column="salary_min"/>
+        <result property="salaryMax" column="salary_max"/>
+        <result property="description" column="description"/>
+        <result property="requirement" column="requirement"/>
+        <result property="status" column="status"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="BaseJobColumns">
+        j.id,
+        j.subsidiary_id,
+        j.job_category_id,
+        j.title,
+        j.company,
+        j.city,
+        j.category,
+        j.type,
+        j.business_line,
+        j.province_code,
+        j.city_code,
+        j.work_mode,
+        j.duration_type,
+        j.internship_length,
+        j.required_skills_json,
+        j.tags,
+        j.salary_min,
+        j.salary_max,
+        j.description,
+        j.requirement,
+        j.status,
+        j.publish_time,
+        j.create_time,
+        j.update_time
+    </sql>
+
+    <sql id="JoinedJobColumns">
+        j.id AS id,
+        s.group_name AS groupName,
+        s.id AS subsidiaryId,
+        s.subsidiary_name AS subsidiaryName,
+        s.short_name AS shortName,
+        j.business_line AS businessLine,
+        jc.id AS jobCategoryId,
+        jc.category_name AS categoryName,
+        j.province_code AS provinceCode,
+        rp.name AS provinceName,
+        j.city_code AS cityCode,
+        rc.name AS cityName,
+        j.work_mode AS workMode,
+        j.duration_type AS durationType,
+        j.internship_length AS internshipLength,
+        j.title AS title,
+        j.company AS company,
+        j.city AS city,
+        j.category AS category,
+        j.type AS type,
+        j.salary_min AS salaryMin,
+        j.salary_max AS salaryMax,
+        j.required_skills_json AS requiredSkillsJson,
+        j.tags AS tags,
+        j.description AS description,
+        j.requirement AS requirement,
+        j.status AS status,
+        j.publish_time AS publishTime,
+        j.create_time AS createTime,
+        j.update_time AS updateTime
+    </sql>
+
+    <sql id="JobJoinClause">
+        FROM job j
+        INNER JOIN subsidiary_company s ON s.id = j.subsidiary_id
+        INNER JOIN job_category jc ON jc.id = j.job_category_id
+        INNER JOIN region_province rp ON rp.code = j.province_code
+        INNER JOIN region_city rc ON rc.code = j.city_code
+    </sql>
+
+    <sql id="JobWhereClause">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.description LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.requirement LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.business_line LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="subsidiaryId != null">
+                AND j.subsidiary_id = #{subsidiaryId}
+            </if>
+            <if test="categoryId != null">
+                AND j.job_category_id = #{categoryId}
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                AND j.province_code = #{provinceCode}
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                AND j.city_code = #{cityCode}
+            </if>
+            <if test="city != null and city != ''">
+                AND (rc.name LIKE CONCAT('%', #{city}, '%') OR j.city LIKE CONCAT('%', #{city}, '%'))
+            </if>
+            <if test="category != null and category != ''">
+                AND (jc.category_name LIKE CONCAT('%', #{category}, '%') OR j.category LIKE CONCAT('%', #{category}, '%'))
+            </if>
+            <if test="type != null and type != ''">
+                AND (j.type = #{type} OR j.duration_type = #{type})
+            </if>
+            <if test="workMode != null and workMode != ''">
+                AND (
+                    j.work_mode = #{workMode}
+                    OR (#{workMode} = 'ONSITE' AND j.work_mode IN ('现场办公', '线下办公'))
+                    OR (#{workMode} = 'REMOTE' AND j.work_mode IN ('远程协同', '远程办公'))
+                    OR (#{workMode} = 'HYBRID' AND j.work_mode IN ('混合办公', '混合协同'))
+                )
+            </if>
+            <if test="durationType != null and durationType != ''">
+                AND (
+                    j.duration_type = #{durationType}
+                    OR (#{durationType} = 'SHORT_TERM' AND j.duration_type = '短期实习')
+                    OR (#{durationType} = 'LONG_TERM' AND j.duration_type IN ('长期实习', '实习'))
+                    OR (#{durationType} = 'FULL_TIME' AND j.duration_type IN ('全职', '校招全职'))
+                )
+            </if>
+            <if test="salaryMin != null">
+                AND j.salary_max &gt;= #{salaryMin}
+            </if>
+            <if test="salaryMax != null">
+                AND j.salary_min &lt;= #{salaryMax}
+            </if>
+            <if test="status != null and status != ''">
+                AND j.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="countJobPage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="JobJoinClause"/>
+        <include refid="JobWhereClause"/>
+    </select>
+
+    <select id="selectJobPage" resultType="map">
+        SELECT <include refid="JoinedJobColumns"/>
+        <include refid="JobJoinClause"/>
+        <include refid="JobWhereClause"/>
+        <choose>
+            <when test="sortBy == 'salaryAsc'">
+                ORDER BY j.salary_min ASC, j.publish_time DESC, j.id DESC
+            </when>
+            <when test="sortBy == 'salaryDesc'">
+                ORDER BY j.salary_max DESC, j.publish_time DESC, j.id DESC
+            </when>
+            <otherwise>
+                ORDER BY j.publish_time DESC, j.id DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countHrJobPage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="JobJoinClause"/>
+        <include refid="JobWhereClause"/>
+    </select>
+
+    <select id="selectHrJobPage" resultType="map">
+        SELECT
+            <include refid="JoinedJobColumns"/>,
+            COALESCE(app_stat.applicationCount, 0) AS applicationCount
+        <include refid="JobJoinClause"/>
+        LEFT JOIN (
+            SELECT job_id, COUNT(1) AS applicationCount
+            FROM application_record
+            GROUP BY job_id
+        ) app_stat ON app_stat.job_id = j.id
+        <include refid="JobWhereClause"/>
+        ORDER BY j.update_time DESC, j.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectById" resultMap="JobResultMap">
+        SELECT <include refid="BaseJobColumns"/>
+        FROM job j
+        WHERE j.id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectJobDetail" resultType="map">
+        SELECT <include refid="JoinedJobColumns"/>
+        <include refid="JobJoinClause"/>
+        WHERE j.id = #{id}
+        LIMIT 1
+    </select>
+
+    <insert id="insertJob" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO job
+        (
+            subsidiary_id,
+            job_category_id,
+            title,
+            company,
+            city,
+            category,
+            type,
+            business_line,
+            province_code,
+            city_code,
+            work_mode,
+            duration_type,
+            internship_length,
+            required_skills_json,
+            tags,
+            salary_min,
+            salary_max,
+            description,
+            requirement,
+            status,
+            publish_time,
+            create_time,
+            update_time
+        )
+        VALUES
+        (
+            #{subsidiaryId},
+            #{jobCategoryId},
+            #{title},
+            #{company},
+            #{city},
+            #{category},
+            #{type},
+            #{businessLine},
+            #{provinceCode},
+            #{cityCode},
+            #{workMode},
+            #{durationType},
+            #{internshipLength},
+            CAST(#{requiredSkillsJson} AS JSON),
+            CAST(#{tags} AS JSON),
+            #{salaryMin},
+            #{salaryMax},
+            #{description},
+            #{requirement},
+            #{status},
+            <choose>
+                <when test="status == 'OPEN'">NOW()</when>
+                <otherwise>NULL</otherwise>
+            </choose>,
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <update id="updateJob">
+        UPDATE job
+        SET
+            subsidiary_id = #{subsidiaryId},
+            job_category_id = #{jobCategoryId},
+            title = #{title},
+            company = #{company},
+            city = #{city},
+            category = #{category},
+            type = #{type},
+            business_line = #{businessLine},
+            province_code = #{provinceCode},
+            city_code = #{cityCode},
+            work_mode = #{workMode},
+            duration_type = #{durationType},
+            internship_length = #{internshipLength},
+            required_skills_json = CAST(#{requiredSkillsJson} AS JSON),
+            tags = CAST(#{tags} AS JSON),
+            salary_min = #{salaryMin},
+            salary_max = #{salaryMax},
+            description = #{description},
+            requirement = #{requirement},
+            status = #{status},
+            update_time = NOW(),
+            publish_time = CASE WHEN #{status} = 'OPEN' AND publish_time IS NULL THEN NOW() ELSE publish_time END
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateJobStatus">
+        UPDATE job
+        SET
+            status = #{status},
+            update_time = NOW(),
+            publish_time = CASE WHEN #{status} = 'OPEN' AND publish_time IS NULL THEN NOW() ELSE publish_time END
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM job WHERE id = #{id}
+    </delete>
+
+    <select id="countOpenJobs" resultType="long">
+        SELECT COUNT(1)
+        FROM job
+        WHERE status = 'OPEN'
+    </select>
+
+    <select id="selectSubsidiaryJobDistribution" resultType="map">
+        SELECT
+            s.id AS subsidiaryId,
+            s.subsidiary_name AS name,
+            COUNT(1) AS value
+        FROM job j
+        INNER JOIN subsidiary_company s ON s.id = j.subsidiary_id
+        GROUP BY s.id, s.subsidiary_name
+        ORDER BY value DESC, s.sort_num ASC, s.id ASC
+    </select>
+
+</mapper>

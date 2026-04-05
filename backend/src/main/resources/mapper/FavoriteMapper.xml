@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.offerflow.mapper.FavoriteMapper">
+
+    <insert id="insertFavorite" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO favorite_job (user_id, job_id, create_time)
+        VALUES (#{userId}, #{jobId}, NOW())
+    </insert>
+
+    <delete id="deleteFavorite">
+        DELETE FROM favorite_job
+        WHERE user_id = #{userId}
+          AND job_id = #{jobId}
+    </delete>
+
+    <select id="existsFavorite" resultType="long">
+        SELECT COUNT(1)
+        FROM favorite_job
+        WHERE user_id = #{userId}
+          AND job_id = #{jobId}
+    </select>
+
+    <sql id="FavoriteJoinClause">
+        FROM favorite_job f
+        INNER JOIN job j ON j.id = f.job_id
+        INNER JOIN subsidiary_company s ON s.id = j.subsidiary_id
+        INNER JOIN job_category jc ON jc.id = j.job_category_id
+        INNER JOIN region_province rp ON rp.code = j.province_code
+        INNER JOIN region_city rc ON rc.code = j.city_code
+    </sql>
+
+    <sql id="FavoriteWhereClause">
+        <where>
+            f.user_id = #{userId}
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.business_line LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="city != null and city != ''">
+                AND (rc.name LIKE CONCAT('%', #{city}, '%') OR j.city LIKE CONCAT('%', #{city}, '%'))
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="status != null and status != ''">
+                AND j.status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <select id="countMyFavoritePage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="FavoriteJoinClause"/>
+        <include refid="FavoriteWhereClause"/>
+    </select>
+
+    <select id="selectMyFavoritePage" resultType="map">
+        SELECT
+            f.id AS id,
+            j.id AS jobId,
+            j.title AS title,
+            j.company AS company,
+            j.city AS city,
+            j.salary_min AS salaryMin,
+            j.salary_max AS salaryMax,
+            j.status AS status,
+            s.group_name AS groupName,
+            s.id AS subsidiaryId,
+            s.subsidiary_name AS subsidiaryName,
+            s.short_name AS shortName,
+            j.business_line AS businessLine,
+            jc.id AS jobCategoryId,
+            jc.category_name AS categoryName,
+            rp.code AS provinceCode,
+            rp.name AS provinceName,
+            rc.code AS cityCode,
+            rc.name AS cityName,
+            j.work_mode AS workMode,
+            j.duration_type AS durationType,
+            j.publish_time AS publishTime,
+            f.create_time AS favoriteTime
+        <include refid="FavoriteJoinClause"/>
+        <include refid="FavoriteWhereClause"/>
+        ORDER BY f.create_time DESC, f.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+</mapper>

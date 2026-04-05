@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.offerflow.mapper.ResumeMapper">
+
+    <resultMap id="ResumeResultMap" type="com.offerflow.entity.Resume">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="title" column="title"/>
+        <result property="resumeName" column="resume_name"/>
+        <result property="resumeType" column="resume_type"/>
+        <result property="targetSubsidiaryId" column="target_subsidiary_id"/>
+        <result property="targetCategoryId" column="target_category_id"/>
+        <result property="basicInfoJson" column="basic_info_json"/>
+        <result property="educationJson" column="education_json"/>
+        <result property="experienceJson" column="experience_json"/>
+        <result property="projectJson" column="project_json"/>
+        <result property="skillsJson" column="skills_json"/>
+        <result property="templateCode" column="template_code"/>
+        <result property="pdfUrl" column="pdf_url"/>
+        <result property="completeScore" column="complete_score"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="BaseResumeColumns">
+        id, user_id, title, resume_name, resume_type, target_subsidiary_id, target_category_id,
+        basic_info_json, education_json, experience_json, project_json, skills_json,
+        template_code, pdf_url, complete_score, is_default, create_time, update_time
+    </sql>
+
+    <select id="selectDefaultByUserId" resultMap="ResumeResultMap">
+        SELECT <include refid="BaseResumeColumns"/>
+        FROM resume
+        WHERE user_id = #{userId}
+          AND is_default = 1
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectById" resultMap="ResumeResultMap">
+        SELECT <include refid="BaseResumeColumns"/>
+        FROM resume
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectByUserId" resultMap="ResumeResultMap">
+        SELECT <include refid="BaseResumeColumns"/>
+        FROM resume
+        WHERE user_id = #{userId}
+        ORDER BY is_default DESC, update_time DESC, id DESC
+    </select>
+
+    <insert id="insertResume" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO resume
+        (
+            user_id,
+            title,
+            resume_name,
+            resume_type,
+            target_subsidiary_id,
+            target_category_id,
+            basic_info_json,
+            education_json,
+            experience_json,
+            project_json,
+            skills_json,
+            template_code,
+            pdf_url,
+            complete_score,
+            is_default,
+            create_time,
+            update_time
+        )
+        VALUES
+        (
+            #{userId},
+            #{title},
+            #{resumeName},
+            #{resumeType},
+            #{targetSubsidiaryId},
+            #{targetCategoryId},
+            CAST(#{basicInfoJson} AS JSON),
+            CAST(#{educationJson} AS JSON),
+            CAST(#{experienceJson} AS JSON),
+            CAST(#{projectJson} AS JSON),
+            CAST(#{skillsJson} AS JSON),
+            #{templateCode},
+            #{pdfUrl},
+            #{completeScore},
+            #{isDefault},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <update id="updateResume">
+        UPDATE resume
+        SET
+            title = #{title},
+            resume_name = #{resumeName},
+            resume_type = #{resumeType},
+            target_subsidiary_id = #{targetSubsidiaryId},
+            target_category_id = #{targetCategoryId},
+            basic_info_json = CAST(#{basicInfoJson} AS JSON),
+            education_json = CAST(#{educationJson} AS JSON),
+            experience_json = CAST(#{experienceJson} AS JSON),
+            project_json = CAST(#{projectJson} AS JSON),
+            skills_json = CAST(#{skillsJson} AS JSON),
+            template_code = #{templateCode},
+            complete_score = #{completeScore},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateResumePdfUrl">
+        UPDATE resume
+        SET pdf_url = #{pdfUrl}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="clearDefaultByUserId">
+        UPDATE resume
+        SET is_default = 0, update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <update id="setDefaultById">
+        UPDATE resume
+        SET is_default = 1, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM resume WHERE id = #{id}
+    </delete>
+
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(1) FROM resume WHERE user_id = #{userId}
+    </select>
+
+</mapper>

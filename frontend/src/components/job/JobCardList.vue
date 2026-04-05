@@ -1,0 +1,1 @@
+<template><div class="section-grid"><JobCard v-for="item in items" :key="item.id || item.jobId" :item="item" @favorite="$emit('favorite', $event)" @select="$emit('select', $event)" /></div></template><script setup>defineProps({ items:Array })</script>

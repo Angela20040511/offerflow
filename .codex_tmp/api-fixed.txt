@@ -1,0 +1,349 @@
+һ ӿܹ淶
+1 ӿǰ׺
+ȫӿͳһʹã
+/api
+2 ֤ʽ
+¼ע⣬ȫӿڶҪͷЯ token
+Authorization: Bearer {token}
+3 ʽ
+GET
+ڷҳѯѯɸѡѯ\n query С
+ʾ
+GET /api/jobs?pageNum=1&pageSize=10&keyword=vue&city=Ϻ
+POST
+¼ͶݡղءӲѯ\n JSON С
+ʾ
+{\n  "username": "student01",\n  "password": "123456"\n}
+PUT
+ڸ¡
+DELETE
+ɾ
+4 ͳһؽṹ
+нӿͳһأ
+{\n  "code": 200,\n  "msg": "success",\n  "data": {}\n}
+ҳؽṹ
+ҳӿڵ data ͳһдɣ
+{\n  "list": [],\n  "total": 0,\n  "pageNum": 1,\n  "pageSize": 10\n}
+5 ͨ״̬
+200 ɹ\n400 \n401 δ¼ token Ч\n403 Ȩ\n404 ݲ\n409 ݳͻ\n500 쳣
+6 ֶͨι淶
+ʱֶ
+ͳһʽ
+2026-03-12 14:30:00
+ֶ
+ͳһʹã
+id
+ɫֶ
+ͳһʹã
+APPLICANT\nHR
+λ״̬
+ͳһʹã
+OPEN\nCLOSED\nDRAFT
+Ͷݽ׶
+ͳһʹã
+APPLIED\nSCREENING\nINTERVIEW\nOFFER\nREJECTED\nWITHDRAWN
+ ݶ
+1 û
+{\n  "id": 1,\n  "username": "student01",\n  "role": "APPLICANT",\n  "email": "student01@example.com",\n  "phone": "13800000000",\n  "avatar": "/static/avatar/default.png",\n  "status": 1,\n  "createTime": "2026-03-12 10:00:00"\n}
+2 λ
+{\n  "id": 101,\n  "title": "ǰ˿ʵϰ",\n  "company": "ǺӿƼ",\n  "city": "Ϻ",\n  "category": "ǰ˿",\n  "type": "ʵϰ",\n  "salaryMin": 180,\n  "salaryMax": 250,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "ǰҳ濪ά",\n  "requirement": "Ϥ Vue 3 ǰ˹̻",\n  "status": "OPEN",\n  "publishTime": "2026-03-12 10:00:00"\n}
+3 
+{\n  "id": 201,\n  "userId": 1,\n  "title": "Ĭϼ",\n  "basicInfo": {\n    "name": "",\n    "phone": "13800000000",\n    "email": "student01@example.com",\n    "school": "ĳĳѧ",\n    "major": "",\n    "intention": "ǰ˿ʵϰ"\n  },\n  "educationList": [],\n  "experienceList": [],\n  "projectList": [],\n  "skillList": [],\n  "templateCode": "classic",\n  "pdfUrl": "/files/resume/201.pdf",\n  "completeScore": 86,\n  "updateTime": "2026-03-12 11:00:00"\n}
+4 Ͷݶ
+{\n  "id": 301,\n  "jobId": 101,\n  "jobTitle": "ǰ˿ʵϰ",\n  "company": "ǺӿƼ",\n  "resumeId": 201,\n  "resumeTitle": "Ĭϼ",\n  "stage": "SCREENING",\n  "matchScore": 88,\n  "hrNote": "",\n  "applyTime": "2026-03-12 12:00:00",\n  "updateTime": "2026-03-12 13:00:00"\n}
+5 PDF ָ϶
+{\n  "id": 1,\n  "code": "resume-guide",\n  "title": "׫дָ",\n  "fileUrl": "/pdf/resume-guide.pdf",\n  "sortNum": 1\n}
+ ֤ģӿ
+1 ¼
+
+POST /api/auth/login
+
+{\n  "username": "student01",\n  "password": "123456",\n  "role": "APPLICANT"\n}
+
+{\n  "code": 200,\n  "msg": "¼ɹ",\n  "data": {\n    "token": "token_xxx",\n    "userId": 1,\n    "username": "student01",\n    "role": "APPLICANT",\n    "avatar": "/static/avatar/default.png"\n  }\n}
+ʧܷ
+{\n  "code": 401,\n  "msg": "û",\n  "data": null\n}
+2 ע
+
+POST /api/auth/register
+
+{\n  "username": "student02",\n  "password": "123456",\n  "confirmPassword": "123456",\n  "email": "student02@example.com",\n  "phone": "13800000001",\n  "role": "APPLICANT"\n}
+
+{\n  "code": 200,\n  "msg": "עɹ",\n  "data": {\n    "userId": 2\n  }\n}
+3 ȡǰ¼ûϢ
+
+GET /api/auth/profile
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 1,\n    "username": "student01",\n    "role": "APPLICANT",\n    "email": "student01@example.com",\n    "phone": "13800000000",\n    "avatar": "/static/avatar/default.png"\n  }\n}
+ ְҳģӿ
+1 ְҳ
+
+GET /api/dashboard/applicant/overview
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "applicationCount": 12,\n    "interviewCount": 2,\n    "favoriteCount": 5,\n    "resumeCompleteScore": 86,\n    "recentApplications": [\n      {\n        "id": 301,\n        "jobTitle": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "stage": "SCREENING",\n        "applyTime": "2026-03-12 12:00:00"\n      }\n    ],\n    "recommendJobs": [\n      {\n        "id": 101,\n        "title": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "city": "Ϻ",\n        "salaryMin": 180,\n        "salaryMax": 250\n      }\n    ]\n  }\n}
+ λĽӿ
+1 λҳѯ
+
+GET /api/jobs
+Query 
+pageNum\npageSize\nkeyword\ncity\ncategory\ntype\nsalaryMin\nsalaryMax\nstatus\nsortBy
+ʾ
+GET /api/jobs?pageNum=1&pageSize=10&keyword=vue&city=Ϻ&category=ǰ˿&type=ʵϰ
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 101,\n        "title": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "city": "Ϻ",\n        "category": "ǰ˿",\n        "type": "ʵϰ",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "tags": ["Vue", "JavaScript", "Element Plus"],\n        "status": "OPEN",\n        "publishTime": "2026-03-12 10:00:00",\n        "isFavorite": true,\n        "isApplied": false\n      }\n    ],\n    "total": 58,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 λ
+
+GET /api/jobs/{id}
+ʾ
+GET /api/jobs/101
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 101,\n    "title": "ǰ˿ʵϰ",\n    "company": "ǺӿƼ",\n    "city": "Ϻ",\n    "category": "ǰ˿",\n    "type": "ʵϰ",\n    "salaryMin": 180,\n    "salaryMax": 250,\n    "tags": ["Vue", "JavaScript", "Element Plus"],\n    "description": "ǰҳ濪ά",\n    "requirement": "Ϥ Vue 3 ǰ˹̻",\n    "status": "OPEN",\n    "publishTime": "2026-03-12 10:00:00",\n    "isFavorite": true,\n    "isApplied": false,\n    "companyInfo": {\n      "name": "ǺӿƼ",\n      "size": "100499",\n      "industry": "",\n      "intro": "һרעҵֻĹ˾"\n    }\n  }\n}
+ ղģӿ
+1 ղظλ
+
+POST /api/favorites
+
+{\n  "jobId": 101\n}
+
+{\n  "code": 200,\n  "msg": "ղسɹ",\n  "data": true\n}
+2 ȡղ
+
+DELETE /api/favorites/{jobId}
+ʾ
+DELETE /api/favorites/101
+
+{\n  "code": 200,\n  "msg": "ȡղسɹ",\n  "data": true\n}
+3 ҵղطҳ
+
+GET /api/favorites/me
+Query 
+pageNum\npageSize\nkeyword\ncity
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "jobId": 101,\n        "title": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "city": "Ϻ",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "favoriteTime": "2026-03-12 11:00:00"\n      }\n    ],\n    "total": 5,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+ ģӿ
+1 ȡҵĬϼ
+
+GET /api/resumes/me
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 201,\n    "userId": 1,\n    "title": "Ĭϼ",\n    "basicInfo": {\n      "name": "",\n      "phone": "13800000000",\n      "email": "student01@example.com",\n      "school": "ĳĳѧ",\n      "major": "",\n      "intention": "ǰ˿ʵϰ"\n    },\n    "educationList": [\n      {\n        "school": "ĳĳѧ",\n        "major": "",\n        "startDate": "2022-09",\n        "endDate": "2026-06",\n        "degree": ""\n      }\n    ],\n    "experienceList": [],\n    "projectList": [],\n    "skillList": ["Vue 3", "JavaScript", "MySQL"],\n    "templateCode": "classic",\n    "pdfUrl": "/files/resume/201.pdf",\n    "completeScore": 86,\n    "updateTime": "2026-03-12 11:00:00"\n  }\n}
+2 ݸ
+
+POST /api/resumes/save
+
+{\n  "id": 201,\n  "title": "Ĭϼ",\n  "basicInfo": {\n    "name": "",\n    "phone": "13800000000",\n    "email": "student01@example.com",\n    "school": "ĳĳѧ",\n    "major": "",\n    "intention": "ǰ˿ʵϰ"\n  },\n  "educationList": [\n    {\n      "school": "ĳĳѧ",\n      "major": "",\n      "startDate": "2022-09",\n      "endDate": "2026-06",\n      "degree": ""\n    }\n  ],\n  "experienceList": [\n    {\n      "company": "ƷƼ",\n      "position": "ǰʵϰ",\n      "startDate": "2025-07",\n      "endDate": "2025-09",\n      "content": " Vue ҳ濪"\n    }\n  ],\n  "projectList": [\n    {\n      "name": "Ƹƽ̨Ŀ",\n      "role": "ǰ˿",\n      "content": "¼ · Ȩ  PDF Ԥ"\n    }\n  ],\n  "skillList": ["Vue 3", "Element Plus", "Axios"],\n  "templateCode": "classic"\n}
+
+{\n  "code": 200,\n  "msg": "ɹ",\n  "data": {\n    "id": 201,\n    "completeScore": 92,\n    "updateTime": "2026-03-12 15:20:00"\n  }\n}
+3 ϴ PDF 
+
+POST /api/resumes/upload
+Content Type
+multipart/form-data
+ֶ
+file\nresumeId
+
+{\n  "code": 200,\n  "msg": "ϴɹ",\n  "data": {\n    "resumeId": 201,\n    "pdfUrl": "/files/resume/201.pdf"\n  }\n}
+4 ȡ PDF ַ
+
+GET /api/resumes/{id}/pdf
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "resumeId": 201,\n    "pdfUrl": "/files/resume/201.pdf"\n  }\n}
+5 ȡ
+
+GET /api/resumes/{id}/complete-score
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "resumeId": 201,\n    "completeScore": 92\n  }\n}
+ Ͷģӿ
+1 Ͷݸλ
+
+POST /api/applications
+
+{\n  "jobId": 101,\n  "resumeId": 201\n}
+
+{\n  "code": 200,\n  "msg": "Ͷݳɹ",\n  "data": {\n    "applicationId": 301,\n    "stage": "APPLIED",\n    "applyTime": "2026-03-12 16:00:00"\n  }\n}
+ʧܷ
+{\n  "code": 409,\n  "msg": "øλͶ",\n  "data": null\n}
+2 ҵͶݷҳ
+
+GET /api/applications/me
+Query 
+pageNum\npageSize\nstage\nkeyword
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 301,\n        "jobId": 101,\n        "jobTitle": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "resumeId": 201,\n        "resumeTitle": "Ĭϼ",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "hrNote": "",\n        "applyTime": "2026-03-12 16:00:00",\n        "updateTime": "2026-03-12 18:00:00"\n      }\n    ],\n    "total": 12,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+3 Ͷ
+
+PUT /api/applications/{id}/withdraw
+
+{\n  "code": 200,\n  "msg": "سɹ",\n  "data": true\n}
+ ְָģӿ
+1 ȡָĿ¼
+
+GET /api/guides
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "id": 1,\n      "code": "resume-guide",\n      "title": "׫дָ",\n      "fileUrl": "/pdf/resume-guide.pdf",\n      "sortNum": 1\n    },\n    {\n      "id": 2,\n      "code": "interview-guide",\n      "title": "׼ָ",\n      "fileUrl": "/pdf/interview-guide.pdf",\n      "sortNum": 2\n    }\n  ]\n}
+2 ȡָ
+
+GET /api/guides/{code}
+ʾ
+GET /api/guides/resume-guide
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 1,\n    "code": "resume-guide",\n    "title": "׫дָ",\n    "fileUrl": "/pdf/resume-guide.pdf",\n    "sortNum": 1\n  }\n}
+ʮ HR ҳģӿ
+1 HR ҳ
+
+GET /api/hr/dashboard/overview
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "openJobCount": 8,\n    "newApplicationCount": 15,\n    "screeningCount": 20,\n    "interviewCount": 6,\n    "recentApplications": [\n      {\n        "applicationId": 301,\n        "candidateName": "",\n        "jobTitle": "ǰ˿ʵϰ",\n        "stage": "SCREENING",\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ]\n  }\n}
+ʮһ HR λӿ
+1 HR λҳ
+
+GET /api/hr/jobs
+Query 
+pageNum\npageSize\nkeyword\ncity\ncategory\nstatus
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 101,\n        "title": "ǰ˿ʵϰ",\n        "company": "ǺӿƼ",\n        "city": "Ϻ",\n        "category": "ǰ˿",\n        "type": "ʵϰ",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "status": "OPEN",\n        "applicationCount": 18,\n        "publishTime": "2026-03-12 10:00:00"\n      }\n    ],\n    "total": 8,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 λ
+
+POST /api/hr/jobs
+
+{\n  "title": "ǰ˿ʵϰ",\n  "company": "ǺӿƼ",\n  "city": "Ϻ",\n  "category": "ǰ˿",\n  "type": "ʵϰ",\n  "salaryMin": 180,\n  "salaryMax": 250,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "ǰҳ濪ά",\n  "requirement": "Ϥ Vue 3 ǰ˹̻",\n  "status": "OPEN"\n}
+
+{\n  "code": 200,\n  "msg": "ɹ",\n  "data": {\n    "id": 101\n  }\n}
+3 ޸ĸλ
+
+PUT /api/hr/jobs/{id}
+
+{\n  "title": "ǰ˿ʵϰ",\n  "company": "ǺӿƼ",\n  "city": "Ϻ",\n  "category": "ǰ˿",\n  "type": "ʵϰ",\n  "salaryMin": 200,\n  "salaryMax": 280,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "ǰҳ濪ά",\n  "requirement": "Ϥ Vue 3 ǰ˹̻",\n  "status": "OPEN"\n}
+
+{\n  "code": 200,\n  "msg": "޸ĳɹ",\n  "data": true\n}
+4 ɾλ
+
+DELETE /api/hr/jobs/{id}
+
+{\n  "code": 200,\n  "msg": "ɾɹ",\n  "data": true\n}
+5 ޸ĸλ״̬
+
+PUT /api/hr/jobs/{id}/status
+
+{\n  "status": "CLOSED"\n}
+
+{\n  "code": 200,\n  "msg": "״̬³ɹ",\n  "data": true\n}
+ʮ HR ѡ˹ӿ
+1 ѡ˷ҳѯ
+
+GET /api/hr/candidates
+Query 
+pageNum\npageSize\nkeyword\njobId\nschool\nmajor\nstage\nscoreMin\nscoreMax
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "applicationId": 301,\n        "candidateId": 1,\n        "candidateName": "",\n        "school": "ĳĳѧ",\n        "major": "",\n        "jobId": 101,\n        "jobTitle": "ǰ˿ʵϰ",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ],\n    "total": 25,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 ѡ
+
+GET /api/hr/candidates/{applicationId}
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "applicationId": 301,\n    "candidateId": 1,\n    "candidateName": "",\n    "email": "student01@example.com",\n    "phone": "13800000000",\n    "school": "ĳĳѧ",\n    "major": "",\n    "jobId": 101,\n    "jobTitle": "ǰ˿ʵϰ",\n    "stage": "SCREENING",\n    "matchScore": 88,\n    "hrNote": "",\n    "resumeId": 201,\n    "resumePdfUrl": "/files/resume/201.pdf",\n    "keywordHits": ["Vue", "Element Plus", "MySQL"],\n    "applyTime": "2026-03-12 16:00:00",\n    "updateTime": "2026-03-12 18:00:00"\n  }\n}
+3 ޸ĺѡ˽׶
+
+PUT /api/hr/candidates/stage
+
+{\n  "applicationId": 301,\n  "stage": "INTERVIEW"\n}
+
+{\n  "code": 200,\n  "msg": "׶θ³ɹ",\n  "data": true\n}
+4  HR ע
+
+PUT /api/hr/candidates/note
+
+{\n  "applicationId": 301,\n  "hrNote": "ѡ˻"\n}
+
+{\n  "code": 200,\n  "msg": "עɹ",\n  "data": true\n}
+5 ȡѡƥϸ
+
+GET /api/hr/candidates/{applicationId}/match-score
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "totalScore": 88,\n    "skillScore": 35,\n    "majorScore": 20,\n    "projectScore": 18,\n    "experienceScore": 15,\n    "matchedSkills": ["Vue", "Element Plus", "MySQL"],\n    "missingSkills": ["TypeScript"]\n  }\n}
+ʮ HR Ͷݼ¼ӿ
+1 HR Ͷݷҳ
+
+GET /api/hr/applications
+Query 
+pageNum\npageSize\njobId\nstage\nkeyword
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "applicationId": 301,\n        "candidateName": "",\n        "jobTitle": "ǰ˿ʵϰ",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ],\n    "total": 40,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+ʮ HR ͳƽӿ
+1 ͳƸ
+
+GET /api/hr/statistics/overview
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "openJobCount": 8,\n    "applicationCount": 126,\n    "screeningCount": 52,\n    "interviewCount": 18,\n    "offerCount": 4,\n    "rejectedCount": 30\n  }\n}
+2 Ƹ©
+
+GET /api/hr/statistics/funnel
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "stage": "APPLIED",\n      "count": 126\n    },\n    {\n      "stage": "SCREENING",\n      "count": 52\n    },\n    {\n      "stage": "INTERVIEW",\n      "count": 18\n    },\n    {\n      "stage": "OFFER",\n      "count": 4\n    },\n    {\n      "stage": "REJECTED",\n      "count": 30\n    }\n  ]\n}
+3 λͶͳ
+
+GET /api/hr/statistics/job-distribution
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "jobId": 101,\n      "jobTitle": "ǰ˿ʵϰ",\n      "count": 35\n    },\n    {\n      "jobId": 102,\n      "jobTitle": "˿ʵϰ",\n      "count": 28\n    }\n  ]\n}
+ʮ ģӿ
+ģ鲻С汾룬һ𶨺á
+1 ԰
+
+POST /api/hr/interviews
+
+{\n  "applicationId": 301,\n  "roundNum": 1,\n  "interviewTime": "2026-03-15 14:00:00",\n  "interviewer": "ʦ"\n}
+
+{\n  "code": 200,\n  "msg": "԰ųɹ",\n  "data": {\n    "id": 1\n  }\n}
+2 ѯԼ¼
+
+GET /api/hr/interviews?applicationId=301
+
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "id": 1,\n      "applicationId": 301,\n      "roundNum": 1,\n      "interviewTime": "2026-03-15 14:00:00",\n      "interviewer": "ʦ",\n      "status": "PLANNED"\n    }\n  ]\n}
+ʮ ӿǰҳӳ
+¼ҳ
+POST /api/auth/login
+POST /api/auth/register
+GET /api/auth/profile
+ְҳ
+GET /api/dashboard/applicant/overview
+λ
+GET /api/jobs
+GET /api/jobs/{id}
+ҵļ
+GET /api/resumes/me
+POST /api/resumes/save
+POST /api/resumes/upload
+GET /api/resumes/{id}/pdf
+GET /api/resumes/{id}/complete-score
+ҵͶ
+POST /api/applications
+GET /api/applications/me
+PUT /api/applications/{id}/withdraw
+ҵղ
+POST /api/favorites
+DELETE /api/favorites/{jobId}
+GET /api/favorites/me
+ְָ
+GET /api/guides
+GET /api/guides/{code}
+HR ҳ
+GET /api/hr/dashboard/overview
+HR λ
+GET /api/hr/jobs
+POST /api/hr/jobs
+PUT /api/hr/jobs/{id}
+DELETE /api/hr/jobs/{id}
+PUT /api/hr/jobs/{id}/status
+HR ѡ˹
+GET /api/hr/candidates
+GET /api/hr/candidates/{applicationId}
+PUT /api/hr/candidates/stage
+PUT /api/hr/candidates/note
+GET /api/hr/candidates/{applicationId}/match-score
+HR Ͷݼ¼
+GET /api/hr/applications
+HR ͳ
+GET /api/hr/statistics/overview
+GET /api/hr/statistics/funnel
+GET /api/hr/statistics/job-distribution
+ʮ  Codex ʵҪ
+һֱ׷Ӹ Codex
+ϸ½ӿĵʵǰ\n\nһ нӿǰ׺ͳһΪ /api\n ؽṹͳһΪ code msg data\n бӿڱ뷵 list total pageNum pageSize\n ¼ǰ˰ token ŵ Authorization ͷ\n Spring Boot Controller ӿĵʵ\n MyBatis XML ʵָλҳ̬ SQL\n ǰ axios ļҪһһӦЩӿ\n ResumeCenterView  HrResumeReviewView Ҫ PDF ӿڲʹ CanvasPdf չʾ\n ҳ治Ҫд ʵӿ\nʮ ȱ֤ӿںҳջͨ

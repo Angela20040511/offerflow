@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.offerflow.mapper.JobCategoryMapper">
+
+    <resultMap id="JobCategoryResultMap" type="com.offerflow.entity.JobCategory">
+        <id property="id" column="id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="sortNum" column="sort_num"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectActiveList" resultMap="JobCategoryResultMap">
+        SELECT id, category_name, parent_id, sort_num, status, create_time, update_time
+        FROM job_category
+        WHERE status = 1
+        ORDER BY sort_num ASC, id ASC
+    </select>
+
+    <select id="selectById" resultMap="JobCategoryResultMap">
+        SELECT id, category_name, parent_id, sort_num, status, create_time, update_time
+        FROM job_category
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+</mapper>

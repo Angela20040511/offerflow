@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.offerflow.mapper.ApplicationMapper">
+
+    <resultMap id="ApplicationResultMap" type="com.offerflow.entity.Application">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="resumeId" column="resume_id"/>
+        <result property="stage" column="stage"/>
+        <result property="hrNote" column="hr_note"/>
+        <result property="matchScore" column="match_score"/>
+        <result property="systemMatchScore" column="system_match_score"/>
+        <result property="hrReviewScore" column="hr_review_score"/>
+        <result property="hrReviewStatus" column="hr_review_status"/>
+        <result property="hrReviewTime" column="hr_review_time"/>
+        <result property="applyTime" column="apply_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="CandidateNameExpr">
+        COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.name')), ''), u.username)
+    </sql>
+
+    <sql id="SchoolExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.school'))</sql>
+    <sql id="MajorExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.major'))</sql>
+    <sql id="EmailExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.email'))</sql>
+    <sql id="PhoneExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.phone'))</sql>
+
+    <sql id="JoinedApplicationColumns">
+        app.id AS applicationId,
+        app.id AS id,
+        app.user_id AS userId,
+        u.id AS candidateId,
+        <include refid="CandidateNameExpr"/> AS candidateName,
+        <include refid="EmailExpr"/> AS email,
+        <include refid="PhoneExpr"/> AS phone,
+        <include refid="SchoolExpr"/> AS school,
+        <include refid="MajorExpr"/> AS major,
+        s.group_name AS groupName,
+        s.id AS subsidiaryId,
+        s.subsidiary_name AS subsidiaryName,
+        j.business_line AS businessLine,
+        j.id AS jobId,
+        j.title AS jobTitle,
+        jc.id AS jobCategoryId,
+        jc.category_name AS categoryName,
+        rp.code AS provinceCode,
+        rp.name AS provinceName,
+        rc.code AS cityCode,
+        rc.name AS cityName,
+        r.id AS resumeId,
+        r.resume_name AS resumeName,
+        r.pdf_url AS resumePdfUrl,
+        r.skills_json AS resumeSkillsJson,
+        r.project_json AS projectJson,
+        r.experience_json AS experienceJson,
+        j.required_skills_json AS requiredSkillsJson,
+        app.stage AS stage,
+        app.hr_note AS hrNote,
+        app.match_score AS matchScore,
+        app.system_match_score AS systemMatchScore,
+        app.hr_review_score AS hrReviewScore,
+        app.hr_review_status AS hrReviewStatus,
+        app.hr_review_time AS hrReviewTime,
+        app.apply_time AS applyTime,
+        app.update_time AS updateTime
+    </sql>
+
+    <sql id="ApplicationJoinClause">
+        FROM application_record app
+        INNER JOIN sys_user u ON u.id = app.user_id
+        INNER JOIN job j ON j.id = app.job_id
+        INNER JOIN subsidiary_company s ON s.id = j.subsidiary_id
+        INNER JOIN job_category jc ON jc.id = j.job_category_id
+        INNER JOIN region_province rp ON rp.code = j.province_code
+        INNER JOIN region_city rc ON rc.code = j.city_code
+        INNER JOIN resume r ON r.id = app.resume_id
+    </sql>
+
+    <insert id="insertApplication" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO application_record
+        (
+            user_id,
+            job_id,
+            resume_id,
+            stage,
+            hr_note,
+            match_score,
+            system_match_score,
+            hr_review_score,
+            hr_review_status,
+            hr_review_time,
+            apply_time,
+            update_time
+        )
+        VALUES
+        (
+            #{userId},
+            #{jobId},
+            #{resumeId},
+            #{stage},
+            #{hrNote},
+            #{matchScore},
+            #{systemMatchScore},
+            #{hrReviewScore},
+            #{hrReviewStatus},
+            #{hrReviewTime},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <select id="selectByUserIdAndJobId" resultMap="ApplicationResultMap">
+        SELECT
+            id,
+            user_id,
+            job_id,
+            resume_id,
+            stage,
+            hr_note,
+            match_score,
+            system_match_score,
+            hr_review_score,
+            hr_review_status,
+            hr_review_time,
+            apply_time,
+            update_time
+        FROM application_record
+        WHERE user_id = #{userId}
+          AND job_id = #{jobId}
+        LIMIT 1
+    </select>
+
+    <select id="selectById" resultMap="ApplicationResultMap">
+        SELECT
+            id,
+            user_id,
+            job_id,
+            resume_id,
+            stage,
+            hr_note,
+            match_score,
+            system_match_score,
+            hr_review_score,
+            hr_review_status,
+            hr_review_time,
+            apply_time,
+            update_time
+        FROM application_record
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="countMyApplicationPage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            app.user_id = #{userId}
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.business_line LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMyApplicationPage" resultType="map">
+        SELECT <include refid="JoinedApplicationColumns"/>
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            app.user_id = #{userId}
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.business_line LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY app.apply_time DESC, app.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <update id="withdrawApplication">
+        UPDATE application_record
+        SET stage = 'WITHDRAWN', update_time = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </update>
+
+    <select id="countHrApplicationPage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            1 = 1
+            <if test="jobId != null">
+                AND j.id = #{jobId}
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    <include refid="CandidateNameExpr"/> LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+    </select>
+
+    <select id="selectHrApplicationPage" resultType="map">
+        SELECT <include refid="JoinedApplicationColumns"/>
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            1 = 1
+            <if test="jobId != null">
+                AND j.id = #{jobId}
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    <include refid="CandidateNameExpr"/> LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY app.apply_time DESC, app.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countCandidatePage" resultType="long">
+        SELECT COUNT(1)
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            1 = 1
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    <include refid="CandidateNameExpr"/> LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="jobId != null">
+                AND j.id = #{jobId}
+            </if>
+            <if test="school != null and school != ''">
+                AND <include refid="SchoolExpr"/> LIKE CONCAT('%', #{school}, '%')
+            </if>
+            <if test="major != null and major != ''">
+                AND <include refid="MajorExpr"/> LIKE CONCAT('%', #{major}, '%')
+            </if>
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="scoreMin != null">
+                AND app.system_match_score &gt;= #{scoreMin}
+            </if>
+            <if test="scoreMax != null">
+                AND app.system_match_score &lt;= #{scoreMax}
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                AND rp.code = #{provinceCode}
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                AND rc.code = #{cityCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCandidatePage" resultType="map">
+        SELECT <include refid="JoinedApplicationColumns"/>
+        <include refid="ApplicationJoinClause"/>
+        <where>
+            1 = 1
+            <if test="keyword != null and keyword != ''">
+                AND (
+                    <include refid="CandidateNameExpr"/> LIKE CONCAT('%', #{keyword}, '%')
+                    OR j.title LIKE CONCAT('%', #{keyword}, '%')
+                    OR s.subsidiary_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="subsidiaryId != null">
+                AND s.id = #{subsidiaryId}
+            </if>
+            <if test="jobId != null">
+                AND j.id = #{jobId}
+            </if>
+            <if test="school != null and school != ''">
+                AND <include refid="SchoolExpr"/> LIKE CONCAT('%', #{school}, '%')
+            </if>
+            <if test="major != null and major != ''">
+                AND <include refid="MajorExpr"/> LIKE CONCAT('%', #{major}, '%')
+            </if>
+            <if test="stage != null and stage != ''">
+                AND app.stage = #{stage}
+            </if>
+            <if test="scoreMin != null">
+                AND app.system_match_score &gt;= #{scoreMin}
+            </if>
+            <if test="scoreMax != null">
+                AND app.system_match_score &lt;= #{scoreMax}
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                AND rp.code = #{provinceCode}
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                AND rc.code = #{cityCode}
+            </if>
+        </where>
+        ORDER BY app.update_time DESC, app.id DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="selectCandidateDetailByApplicationId" resultType="map">
+        SELECT <include refid="JoinedApplicationColumns"/>
+        <include refid="ApplicationJoinClause"/>
+        WHERE app.id = #{applicationId}
+        LIMIT 1
+    </select>
+
+    <update id="updateApplicationStage">
+        UPDATE application_record
+        SET stage = #{stage}, update_time = NOW()
+        WHERE id = #{applicationId}
+    </update>
+
+    <update id="updateHrNote">
+        UPDATE application_record
+        SET hr_note = #{hrNote}, update_time = NOW()
+        WHERE id = #{applicationId}
+    </update>
+
+    <update id="updateHrReview">
+        UPDATE application_record
+        SET
+            hr_review_score = #{hrReviewScore},
+            hr_review_status = #{hrReviewStatus},
+            hr_note = #{hrNote},
+            hr_review_time = NOW(),
+            update_time = NOW()
+        WHERE id = #{applicationId}
+    </update>
+
+    <select id="countApplicantApplications" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="countApplicantInterview" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE user_id = #{userId}
+          AND stage IN ('INTERVIEW', 'OFFER')
+    </select>
+
+    <select id="countByStage" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE stage = #{stage}
+    </select>
+
+    <select id="countNewApplicationsToday" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE DATE(apply_time) = CURRENT_DATE
+    </select>
+
+    <select id="selectStageStats" resultType="map">
+        SELECT stage AS stage, COUNT(1) AS value
+        FROM application_record
+        GROUP BY stage
+        ORDER BY FIELD(stage, 'APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN')
+    </select>
+
+    <select id="selectSubsidiaryApplicationDistribution" resultType="map">
+        SELECT
+            s.id AS subsidiaryId,
+            s.subsidiary_name AS name,
+            COUNT(1) AS value
+        FROM application_record app
+        INNER JOIN job j ON j.id = app.job_id
+        INNER JOIN subsidiary_company s ON s.id = j.subsidiary_id
+        GROUP BY s.id, s.subsidiary_name
+        ORDER BY value DESC, s.sort_num ASC, s.id ASC
+    </select>
+
+</mapper>

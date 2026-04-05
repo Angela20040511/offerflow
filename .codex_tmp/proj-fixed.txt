@@ -1,0 +1,1173 @@
+һ ȸ Codex ˵
+ֱӷ Codex
+Ŀ OfferFlow\n\nһеǰ˷Ŀ\n\nǰ˼Ҫ\nVue 3\nVite\nElement Plus\nVue Router\nVuex\nAxios\npdfjs-dist\n\n˼Ҫ\nSpring Boot\nMySQL\nMyBatis\nController Service Mapper ܹ\n\nҵ\nʵϰƸͶƽ̨\n\nɫ\nְ\nHR Ա\n\nʵֵĺĹ\nһ ¼עȨ\n ˵ ͷ ģ Tabs KeepAlive ϵͳ\n ְ߶ λ λ ༭ PDF Ԥ Ͷݼ¼ ղظλ ְָ PDF Ķ\n HR  λ ѡ˹ ɸѡ Ƹͳ\n ǰʹ axios ηװ\n ʹͳһؽṹ\n MyBatis ʹ XML ӳ\n иλҳѯĶ̬ SQL\n PDF Ԥʹ pdfjs-dist\nʮ ༭ҳͼɸѡҳʹҷק\nʮһ ·ʹ meta Ȩͽɫ\nʮ Vuex  token ûϢ Tabs KeepAlive б ݸ\n\nҪ\nһ ǰȫʹ script setup\n ļʹֲ\n ʹ DTO VO Entity \n ݿ\n ǰҳֱʾ\n Ҫע\n ȱ֤ԺͿ ׷Ч\n\nĿṹҪ\nĿĿ¼·ֳ frontend  backend Ŀ\nǰ˺ͺ˶ҪĿ¼\nÿļ\nӿ·ǰ׺ͳһʹ /api\nǰ˿ͨ Vite ת\n˱ض˿ʹ 8080\nǰ˱ض˿ʹ 5173\n\nϸҸĿ¼ṹĿ\nȻļʵ\nҪ
+ ĿĿ¼
+offerflow\n frontend\n backend
+ ǰĿ¼ṹ
+frontend\n public\n   pdf\n     resume-guide.pdf\n     interview-guide.pdf\n     portfolio-guide.pdf\n   favicon.ico\n src\n   api\n     request.js\n     auth.js\n     job.js\n     resume.js\n     application.js\n     favorite.js\n     candidate.js\n     stats.js\n     guide.js\n   assets\n     images\n       login-banner.png\n       empty-data.png\n       logo.png\n     styles\n        reset.css\n        global.css\n        element.css\n        variables.css\n   components\n     layout\n       HomeFrame.vue\n       LayoutMenu.vue\n       LayoutHead.vue\n       LayoutTabBar.vue\n       PageFrame.vue\n     common\n       StatusTag.vue\n       EmptyState.vue\n       SearchBar.vue\n       StatCard.vue\n       ConfirmDialog.vue\n       TableAutoWidth.js\n       PaginationBar.vue\n     pdf\n       CanvasPdf.vue\n     split\n       ColumnFrame.vue\n     resume\n       ResumeEditor.vue\n       ResumePreview.vue\n       ResumeBasicForm.vue\n       ResumeEducationForm.vue\n       ResumeExperienceForm.vue\n       ResumeProjectForm.vue\n       ResumeSkillForm.vue\n       ResumeTemplateSelector.vue\n       ResumeUploadPanel.vue\n     job\n       JobFilterBar.vue\n       JobCardList.vue\n       JobCard.vue\n       JobDetailPanel.vue\n       FavoriteButton.vue\n     application\n       ApplicationFilterBar.vue\n       ApplicationTable.vue\n     hr\n        HrJobToolbar.vue\n        HrJobTable.vue\n        CandidateFilterBar.vue\n        CandidateTable.vue\n        ResumeReviewPanel.vue\n        StageActionBar.vue\n        StatsPanels.vue\n   constants\n     menu.js\n     routes.js\n     role.js\n     status.js\n     resume-template.js\n   router\n     index.js\n   store\n     index.js\n     modules\n        user.js\n        tabs.js\n        resume.js\n        job.js\n        guide.js\n   utils\n     auth.js\n     storage.js\n     file.js\n     pdf.js\n     score.js\n     format.js\n     validate.js\n     menu.js\n   views\n     login\n       LoginView.vue\n       RegisterView.vue\n     dashboard\n       ApplicantDashboard.vue\n       HrDashboard.vue\n     job\n       JobCenterView.vue\n       JobDetailView.vue\n     resume\n       ResumeCenterView.vue\n     application\n       MyApplicationsView.vue\n       MyFavoritesView.vue\n     guide\n       GuideCenterView.vue\n     hr\n        HrJobManageView.vue\n        HrCandidateManageView.vue\n        HrApplicationManageView.vue\n        HrResumeReviewView.vue\n        HrStatisticsView.vue\n   App.vue\n   main.js\n .env.development\n .env.production\n package.json\n vite.config.js
+ ǰÿļдʲô
+1 ļ
+src/main.js
+дӦڡ\nְ£
+ Vue Ӧʵ
+ע Vuex
+ע Vue Router
+ע Element Plus
+ȫʽ
+ App.vue
+ںͽ main.js 𴴽ʵظһµġ
+޸ Vueǰʵѵγϵ
+src/App.vue
+ֻһǣ
+һ router-view
+дҵ
+ȫֲͳһ HomeFrame.vue е
+2 Vite 
+vite.config.js
+дЩݣ
+@ ָ src
+Element Plus Զ
+vuevue-routervuex Զ
+/api  http://localhost:8080
+ȷҪ vite.config.js Զʹá
+޸ Vueǰʵѵγϵ
+.env.development
+дǰ˿
+VITE_APP_TITLE=OfferFlow
+VITE_BASE_API=/api
+.env.production
+д
+VITE_APP_TITLE=OfferFlow
+VITE_BASE_API=/api
+3 ·
+src/router/index.js
+ǰؼļ֮һ\nҪд
+·ɶ
+Ƕ·
+ÿ·ɵ meta
+requiresAuth
+role
+title
+keepAlive
+ȫǰ
+δ¼ת¼ҳ
+ɫƥתӦҳ
+¼Զָ Tabs ͻҳ
+Ҫ·ɡǶ·ɡԪϢȫҪء
+޸ Vueǰʵѵγϵ
+޸ Vueǰʵѵγϵ
+·嵥
+д
+/login
+/register
+/home
+/home/applicant/dashboard
+/home/applicant/jobs
+/home/applicant/jobs/:id
+/home/applicant/resume
+/home/applicant/applications
+/home/applicant/favorites
+/home/applicant/guide
+/home/hr/dashboard
+/home/hr/jobs
+/home/hr/candidates
+/home/hr/applications
+/home/hr/review/:id
+/home/hr/statistics
+4 Vuex
+src/store/index.js
+עģ鲢 store
+src/store/modules/user.js
+дЩ״̬
+token
+userId
+username
+role
+avatar
+дЩ getter
+isLogin
+role
+token
+username
+дЩ mutation
+setToken
+setUserInfo
+clearUser
+дЩ action
+login
+getProfile
+logout
+ȷ Vuex ģ顢token  username 洢
+޸ Vueǰʵѵγϵ
+src/store/modules/tabs.js
+дϵͳǩҳ״̬
+ǰҳ
+Ѵ򿪱ǩ
+KeepAlive 
+дЩ
+ǩ
+ǩ
+ɾǩ
+ñǩ
+ò˵ͬ
+ǽģ· Tabs  KeepAlive ĺġ
+޸ Vueǰʵѵγϵ
+src/store/modules/resume.js
+д༭״̬
+ݸ
+ǰģ
+PDF ַ
+ʱ
+дЩܣ
+ֶ
+
+òݸ
+ݸ
+ȡݸ
+Ӧ watch ݴύ
+޸ Vueǰʵѵγϵ
+src/store/modules/job.js
+дλɸѡ
+ؼ
+
+
+н
+ʵϰʽ
+ҳ
+ÿҳ
+src/store/modules/guide.js
+д PDF ָĿ¼״̬
+ǰĵ
+ǰҳ
+ű
+5 Axios
+src/api/request.js
+дͨ axios ʵ
+baseURL
+ʱʱ
+Զ token
+Ӧͳһ code
+401 Զǳ
+ͳһʾ
+ getpostputdelete
+ axios ηװءӦءͳһ
+޸ Vueǰʵѵγϵ
+src/api/auth.js
+дЩӿں
+¼
+ע
+ȡǰûϢ
+src/api/job.js
+дЩӿں
+λҳ
+λ
+λ
+༭λ
+ɾλ
+߸λ
+src/api/resume.js
+дЩӿں
+ȡҵļ
+ݸ
+ϴ PDF
+ȡ PDF ַ
+ȡ
+src/api/application.js
+дЩӿں
+Ͷݸλ
+ȡҵͶ
+Ͷ
+HR ȡͶݷҳ
+HR ޸Ͷݽ׶
+HR д
+src/api/favorite.js
+дЩӿں
+ղظλ
+ȡղ
+ȡղб
+src/api/candidate.js
+дЩӿں
+ѡ˷ҳ
+ѡ
+ѡƥ
+ѡ˽׶ת
+src/api/stats.js
+дЩӿں
+ְҳͳ
+HR ҳͳ
+HR Ƹ©
+HR λͶͳ
+src/api/guide.js
+дЩӿں
+ȡ PDF ָĿ¼
+ȡǰĵϢ
+6 ϵͳ
+src/components/layout/HomeFrame.vue
+ϵͳܿǡ\n
+˵
+ͷ
+ Tabs
+м RouterView
+KeepAlive
+ݵǰɫв˵
+ϵͳҳ
+ϵͳҳܺͼģ Tabs 
+޸ Vueǰʵѵγϵ
+src/components/layout/LayoutMenu.vue
+˵\n
+ݵǰɫɲ˵
+ֶ֧༶˵
+ָ֧ǰ˵
+ Tabs ͬ
+˵ҳǩ
+ LayoutMenu ӦǶ·ɡѭȾͲ˵ Tabs ͬ
+޸ Vueǰʵѵγϵ
+src/components/layout/LayoutHead.vue
+ͷ\n
+ƽ̨
+ȫ
+ûͷ
+û
+ɫ
+˵
+˳¼
+嵥ͷơ
+޸ Vueǰʵѵγϵ
+src/components/layout/LayoutTabBar.vue
+ģ·ɱǩ\n
+չʾдҳǩ
+лҳǩ
+رҳǩ
+ر
+ˢµǰҳǩ
+ͬ˵
+src/components/layout/PageFrame.vue
+ͳһҳܡ\n
+
+
+
+۳ҵҳ
+ PageFrame ͳһҳܡ
+޸ Vueǰʵѵγϵ
+7 ͨ
+src/components/common/StatusTag.vue
+װ״̬ǩ
+Ͷ
+ɸѡ
+
+¼
+̭
+Ƹ
+ѹر
+src/components/common/EmptyState.vue
+״̬
+޸λ
+ղ
+Ͷ
+޺ѡ
+src/components/common/SearchBar.vue
+ɸ
+src/components/common/StatCard.vue
+ҳͳƿƬ
+src/components/common/ConfirmDialog.vue
+ͳһɾȷϡȷϡ
+src/components/common/TableAutoWidth.js
+ǹļ\nְ
+ַ
+ɱп
+֧СȺ
+רбпӦ
+޸ Vueǰʵѵγϵ
+src/components/common/PaginationBar.vue
+ͳһҳ\nְ
+ǰҳ
+ÿҳ
+
+ҳ
+ҳС
+8 PDF 
+src/components/pdf/CanvasPdf.vue
+ɿɸ\nְ
+ PDF ַ
+ PDF ĵ
+Ⱦǰҳ
+һҳ
+һҳ
+ҳת
+
+Ⱪ¶ҳŵ˫
+ʾ״̬
+ȷҪ CanvasPdf.vuePropsv-modelpdfjs-distȾҳҳš
+޸ Vueǰʵѵγϵ
+src/components/split/ColumnFrame.vue
+ͨҷ\nְ
+
+ʼ
+С
+
+갴¿ʼק
+ƶı
+̧ק
+סϴο
+ﵥ ColumnFrame ק̡
+޸ Vueǰʵѵγϵ
+9 ģ
+src/components/resume/ResumeEditor.vue
+ܱ༭\n
+ϸ
+ղݸ
+޸ʱ¼
+֧ģл
+ֱ֧水ť
+src/components/resume/ResumePreview.vue
+ҲʵʱԤ\n
+ģȾ
+չʾϢĿ
+֧Ԥ
+ֵ֧ڰť
+src/components/resume/ResumeBasicForm.vue
+Ϣ
+
+ֻ
+
+ѧУ
+רҵ
+ְ
+src/components/resume/ResumeEducationForm.vue
+
+src/components/resume/ResumeExperienceForm.vue
+ʵϰ
+src/components/resume/ResumeProjectForm.vue
+Ŀ
+src/components/resume/ResumeSkillForm.vue
+ܱ
+src/components/resume/ResumeTemplateSelector.vue
+ģѡ\nְ
+ģ
+ģ
+У԰ģ
+src/components/resume/ResumeUploadPanel.vue
+ϴ PDF 塣\nְ
+ϴļ
+Уļ
+չʾǰļ
+Ԥ
+10 λģ
+src/components/job/JobFilterBar.vue
+λɸѡ\nְ
+ؼ
+
+
+н
+Զ̻
+ʽ
+ѯ¼
+src/components/job/JobCardList.vue
+λƬб
+src/components/job/JobCard.vue
+λƬ\nչʾ
+λ
+˾
+ص
+н
+ǩ
+ʱ
+ղذť
+Ͷݰť
+src/components/job/JobDetailPanel.vue
+λ塣\nչʾ
+λְ
+ְҪ
+ܱǩ
+˾
+Ͷݰť
+ѡ
+src/components/job/FavoriteButton.vue
+ղذť֧ղδղ״̬л
+11 Ͷģ
+src/components/application/ApplicationFilterBar.vue
+Ͷɸѡ\nְ
+ȫ
+Ͷ
+ɸѡ
+
+¼
+̭
+src/components/application/ApplicationTable.vue
+Ͷݼ¼\nֶΣ
+λ
+˾
+ʱ
+״̬
+ʹü
+ע
+
+12 HR ģ
+src/components/hr/HrJobToolbar.vue
+λ
+
+״̬ɸѡ
+ɸѡ
+½λť
+src/components/hr/HrJobTable.vue
+λ\nܣ
+ҳ
+༭
+ɾ
+
+鿴Ͷ
+src/components/hr/CandidateFilterBar.vue
+ѡɸѡ\nֶΣ
+λ
+ѧУ
+רҵ
+׶
+ƥ
+src/components/hr/CandidateTable.vue
+ѡ˱\nֶΣ
+
+ѧУ
+רҵ
+λ
+ƥ
+״̬
+
+src/components/hr/ResumeReviewPanel.vue
+ѡϢ塣\nչʾ
+Ϣ
+ؼ
+ƥ
+Աע
+׶ΰť
+src/components/hr/StageActionBar.vue
+׶ת\n
+ɸѡ
+
+ Offer
+̭
+ע
+src/components/hr/StatsPanels.vue
+ͳ\nչʾ
+Ƹиλ
+Ͷ
+ɸѡ
+
+©ͳ
+13 ļ
+src/constants/menu.js
+д˵顣\nֳɣ
+ְ߲˵
+HR ˵
+src/constants/routes.js
+д·
+src/constants/role.js
+дɫ
+APPLICANT
+HR
+src/constants/status.js
+д״̬ӳ䣺
+λ״̬
+Ͷ״̬
+ѡ˽׶״̬
+src/constants/resume-template.js
+дģб
+14 ļ
+src/utils/auth.js
+ token ȡáɾ
+src/utils/storage.js
+ش洢ߡ\nڣ
+token
+ûϢ
+Tabs
+ݸ
+src/utils/file.js
+ļСļУ顣
+src/utils/pdf.js
+ PDF ַת
+src/utils/score.js
+ƥȼ߼\n飺
+רҵƥ
+ƥ
+ѧУ㼶
+Ŀ
+ʵϰ
+src/utils/format.js
+ڡнʡ״̬ıʽ
+src/utils/validate.js
+У
+src/utils/menu.js
+ݽɫɲ˵ҳ·ɡ
+15 ҳļ
+src/views/login/LoginView.vue
+ְ
+¼
+˺У
+¼
+ɹд Vuex
+ҳ
+src/views/login/RegisterView.vue
+ְ
+ע
+ûУ
+ȷ
+ֻУ
+עɹ¼
+src/views/dashboard/ApplicantDashboard.vue
+ְҳ\nݣ
+Ͷ
+
+ղ
+
+Ƽλ
+Ͷ
+src/views/dashboard/HrDashboard.vue
+HR ҳ\nݣ
+Ƹλ
+Ͷ
+ɸѡ
+׶©
+Ͷ
+src/views/job/JobCenterView.vue
+λҳ\nְ
+ʹ PageFrame.vue
+ɸѡ
+λƬ
+ҳ
+ѯ
+ɸѡ
+src/views/job/JobDetailView.vue
+λҳ\nְ
+ȡ·ɲ
+ȡλ
+ѡ
+Ͷ
+ղظλ
+src/views/resume/ResumeCenterView.vue
+ǰҳ\nְ
+ʹ ColumnFrame.vue
+ ResumeEditor.vue
+ұ ResumePreview.vue  CanvasPdf.vue
+watch ȼݸ
+Զݸ
+
+Ӧ watchPropsv-modelPDF ק
+޸ Vueǰʵѵγϵ
+޸ Vueǰʵѵγϵ
+src/views/application/MyApplicationsView.vue
+ҵͶҳ\nְ
+״̬ɸѡ
+չʾ
+ҳ
+鿴
+Ͷ
+src/views/application/MyFavoritesView.vue
+ҵղҳ\nְ
+ղظλб
+ȡղ
+ȥ
+һͶ
+src/views/guide/GuideCenterView.vue
+ְָҳ\nְ
+ PDF ˵
+ұ CanvasPdf.vue
+лĵ
+ҳ
+src/views/hr/HrJobManageView.vue
+HR λҳ\nְ
+PageFrame.vue
+HrJobToolbar.vue
+HrJobTable.vue
+ͱ༭
+ɾȷ
+ҳ
+пӦ
+src/views/hr/HrCandidateManageView.vue
+ѡ˹ҳ\nְ
+ѡɸѡ
+ѡ˱
+ƥ
+׶ת
+src/views/hr/HrApplicationManageView.vue
+HR Ͷݼ¼ҳ\nְ
+λ鿴Ͷ
+״̬ɸѡ
+鿴ѡ
+
+src/views/hr/HrResumeReviewView.vue
+һҳ\nְ
+ʹ ColumnFrame.vue
+ ResumeReviewPanel.vue
+ұ CanvasPdf.vue
+עԶ
+һһѡ
+Ľ׶
+ǩҳ
+src/views/hr/HrStatisticsView.vue
+HR ͳҳ\nְ
+Ƭ
+©
+λͶ
+׶
+ Ŀ¼ṹ
+backend\n src\n   main\n     java\n       com\n          offerflow\n             OfferFlowApplication.java\n             common\n               ApiResult.java\n               PageResult.java\n               ResultCode.java\n               BusinessException.java\n               GlobalExceptionHandler.java\n             config\n               CorsConfig.java\n               WebMvcConfig.java\n               JacksonConfig.java\n             controller\n               AuthController.java\n               JobController.java\n               ResumeController.java\n               ApplicationController.java\n               FavoriteController.java\n               GuideController.java\n               hr\n                  HrJobController.java\n                  HrCandidateController.java\n                  HrApplicationController.java\n                  HrStatisticsController.java\n             dto\n               LoginDTO.java\n               RegisterDTO.java\n               JobQueryDTO.java\n               JobSaveDTO.java\n               ResumeSaveDTO.java\n               ApplicationCreateDTO.java\n               ApplicationQueryDTO.java\n               CandidateQueryDTO.java\n               CandidateStageUpdateDTO.java\n               HrNoteSaveDTO.java\n             entity\n               User.java\n               Job.java\n               Resume.java\n               Application.java\n               Favorite.java\n               GuideDoc.java\n               Interview.java\n             mapper\n               UserMapper.java\n               JobMapper.java\n               ResumeMapper.java\n               ApplicationMapper.java\n               FavoriteMapper.java\n               GuideDocMapper.java\n               InterviewMapper.java\n             service\n               AuthService.java\n               JobService.java\n               ResumeService.java\n               ApplicationService.java\n               FavoriteService.java\n               GuideService.java\n               CandidateService.java\n               StatisticsService.java\n               InterviewService.java\n             service\n               impl\n                  AuthServiceImpl.java\n                  JobServiceImpl.java\n                  ResumeServiceImpl.java\n                  ApplicationServiceImpl.java\n                  FavoriteServiceImpl.java\n                  GuideServiceImpl.java\n                  CandidateServiceImpl.java\n                  StatisticsServiceImpl.java\n                  InterviewServiceImpl.java\n             utils\n               JwtTokenUtil.java\n               PasswordUtil.java\n               DateTimeUtil.java\n               MatchScoreUtil.java\n             vo\n                LoginVO.java\n                UserProfileVO.java\n                JobListItemVO.java\n                JobDetailVO.java\n                ResumeVO.java\n                ApplicationListItemVO.java\n                CandidateListItemVO.java\n                CandidateDetailVO.java\n                GuideDocVO.java\n                DashboardApplicantVO.java\n                DashboardHrVO.java\n                StatisticsOverviewVO.java\n     resources\n        mapper\n          UserMapper.xml\n          JobMapper.xml\n          ResumeMapper.xml\n          ApplicationMapper.xml\n          FavoriteMapper.xml\n          GuideDocMapper.xml\n          InterviewMapper.xml\n        sql\n          schema.sql\n          data.sql\n        application.yml\n        application-dev.yml\n pom.xml
+ ÿļдʲô
+1 ļ
+OfferFlowApplication.java
+Spring Boot ࡣ\nְ
+Ӧ
+ɨ
+ MyBatis Mapper ɨ
+2 ͨ÷쳣
+common/ApiResult.java
+ͳһؽṹ
+code
+msg
+data
+ȷҪװһͨ÷ࡣ
+޸ Vueǰʵѵγϵ
+common/PageResult.java
+ҳؽṹ
+list
+total
+pageNum
+pageSize
+common/ResultCode.java
+״̬ö٣
+ɹ
+
+δ¼
+Ȩ
+ҵ쳣
+ϵͳ쳣
+common/BusinessException.java
+ҵ쳣ࡣ
+common/GlobalExceptionHandler.java
+ȫ쳣\nְ
+쳣
+ҵ쳣
+ϵͳ쳣
+ͳһṹ
+3 ļ
+config/CorsConfig.java
+ǰ˿
+config/WebMvcConfig.java
+̬Դ PDF Ŀ¼ӳ䡣
+config/JacksonConfig.java
+ڸʽֵ
+resources/application.yml
+á\nд
+˿
+
+MyBatis ·
+־
+resources/application-dev.yml
+á\nд
+MySQL ַ
+û
+
+
+ļϴ·
+4 DTO
+dto/LoginDTO.java
+ֶΣ
+username
+password
+role
+dto/RegisterDTO.java
+ֶΣ
+username
+password
+confirmPassword
+email
+phone
+role
+dto/JobQueryDTO.java
+ֶΣ
+keyword
+city
+category
+type
+salaryMin
+salaryMax
+status
+pageNum
+pageSize
+dto/JobSaveDTO.java
+ֶΣ
+id
+title
+company
+city
+category
+type
+salaryMin
+salaryMax
+tags
+description
+requirement
+status
+dto/ResumeSaveDTO.java
+ֶΣ
+id
+title
+basicInfoJson
+educationJson
+experienceJson
+projectJson
+skillsJson
+templateCode
+dto/ApplicationCreateDTO.java
+ֶΣ
+jobId
+resumeId
+dto/ApplicationQueryDTO.java
+ֶΣ
+status
+pageNum
+pageSize
+dto/CandidateQueryDTO.java
+ֶΣ
+keyword
+jobId
+school
+major
+stage
+scoreMin
+scoreMax
+pageNum
+pageSize
+dto/CandidateStageUpdateDTO.java
+ֶΣ
+applicationId
+stage
+dto/HrNoteSaveDTO.java
+ֶΣ
+applicationId
+hrNote
+5 Entity
+entity/User.java
+Ӧû
+entity/Job.java
+Ӧλ
+entity/Resume.java
+Ӧ\nиӽṹԴ JSON ַ
+entity/Application.java
+ӦͶݱ
+entity/Favorite.java
+Ӧղر
+entity/GuideDoc.java
+Ӧ PDF ָϱ
+entity/Interview.java
+ӦԱ
+6 VO
+vo/LoginVO.java
+¼أ
+token
+userId
+username
+role
+avatar
+vo/UserProfileVO.java
+ǰûϢ
+vo/JobListItemVO.java
+λб
+vo/JobDetailVO.java
+λ顣
+vo/ResumeVO.java
+顣
+vo/ApplicationListItemVO.java
+Ͷݼ¼б
+vo/CandidateListItemVO.java
+ѡб
+vo/CandidateDetailVO.java
+ѡؼϢ
+vo/GuideDocVO.java
+PDF ָб
+vo/DashboardApplicantVO.java
+ְҳݡ
+vo/DashboardHrVO.java
+HR ҳݡ
+vo/StatisticsOverviewVO.java
+HR ͳҳݡ
+7 Mapper ӿ
+mapper/UserMapper.java
+д
+ûͽɫѯû
+û
+ id û
+mapper/JobMapper.java
+д
+λҳѯ
+λ
+λ
+༭λ
+ɾλ
+¸λ״̬
+λͳ
+mapper/ResumeMapper.java
+д
+û
+
+¼
+ѯ PDF ·
+mapper/ApplicationMapper.java
+д
+Ͷ
+жǷͶ
+ҵͶݷҳ
+HR Ͷݷҳ
+Ͷݽ׶
+ HR ע
+Ͷͳ
+mapper/FavoriteMapper.java
+д
+ղ
+ȡղ
+ѯղб
+жǷղ
+mapper/GuideDocMapper.java
+д
+ѯ PDF ָб
+ݱĵ
+mapper/InterviewMapper.java
+д
+Լ¼
+ѯԼ¼
+8 Mapper XML
+resources/mapper/UserMapper.xml
+д顣
+resources/mapper/JobMapper.xml
+ؼ XML\nд
+resultMap
+λҳ̬ SQL
+ؼ
+
+
+״̬
+н
+
+
+
+ɾ
+ȷҪ MyBatisMapper XMLifforeach̬ SQL
+޸ Vueǰʵѵγϵ
+resources/mapper/ResumeMapper.xml
+д
+û
+
+¼
+ PDF ·
+resources/mapper/ApplicationMapper.xml
+д
+Ͷ
+ҵͶݷҳ
+HR Ͷݷҳ
+ѡ˷ҳ
+޸Ľ׶
+޸ıע
+©ͳ
+resources/mapper/FavoriteMapper.xml
+дղɾ顣
+resources/mapper/GuideDocMapper.xml
+д PDF ָϲѯ
+resources/mapper/InterviewMapper.xml
+дԼ¼顣
+9 Service ӿʵ
+service/AuthService.java
+ְ
+¼
+ע
+ȡǰû
+service/impl/AuthServiceImpl.java
+ʵ֣
+Уû
+ȶ
+ token
+ص¼
+service/JobService.java
+ְ
+λҳ
+λ
+λ
+༭λ
+ɾλ
+¸λ״̬
+service/ResumeService.java
+ְ
+ȡҵļ
+ݸ
+ϴ PDF
+ȡ PDF ·
+service/ApplicationService.java
+ְ
+Ͷݸλ
+ȡҵͶ
+ȡ HR Ͷ
+½׶
+汸ע
+service/FavoriteService.java
+ְ
+ղ
+ȡղ
+ղб
+service/GuideService.java
+ְ
+PDF ָĿ¼
+ǰĵ
+service/CandidateService.java
+ְ
+ѡ˷ҳ
+ѡ
+ƥȼ
+service/StatisticsService.java
+ְ
+ְҳͳ
+HR ҳͳ
+Ƹͳҳ
+service/InterviewService.java
+ְ
+Լ¼
+10 Controller
+controller/AuthController.java
+ӿڣ
+POST /api/auth/login
+POST /api/auth/register
+GET /api/auth/profile
+controller/JobController.java
+ӿڣ
+GET /api/jobs
+GET /api/jobs/{id}
+controller/ResumeController.java
+ӿڣ
+GET /api/resumes/me
+POST /api/resumes/save
+POST /api/resumes/upload
+GET /api/resumes/{id}/pdf
+controller/ApplicationController.java
+ӿڣ
+POST /api/applications
+GET /api/applications/me
+controller/FavoriteController.java
+ӿڣ
+POST /api/favorites
+DELETE /api/favorites/{jobId}
+GET /api/favorites/me
+controller/GuideController.java
+ӿڣ
+GET /api/guides
+GET /api/guides/{code}
+controller/hr/HrJobController.java
+ӿڣ
+GET /api/hr/jobs
+POST /api/hr/jobs
+PUT /api/hr/jobs
+DELETE /api/hr/jobs/{id}
+PUT /api/hr/jobs/{id}/status
+controller/hr/HrCandidateController.java
+ӿڣ
+GET /api/hr/candidates
+GET /api/hr/candidates/{applicationId}
+PUT /api/hr/candidates/stage
+PUT /api/hr/candidates/note
+controller/hr/HrApplicationController.java
+ӿڣ
+GET /api/hr/applications
+controller/hr/HrStatisticsController.java
+ӿڣ
+GET /api/hr/statistics/overview
+GET /api/hr/statistics/funnel
+Ҫ Controller  GET  POSTͳһ
+޸ Vueǰʵѵγϵ
+11 
+utils/JwtTokenUtil.java
+ɺͽ token
+utils/PasswordUtil.java
+ܡ
+utils/DateTimeUtil.java
+ڸʽ
+utils/MatchScoreUtil.java
+ƥ㷨\n
+λ
+רҵƥ
+Ŀؼ
+ʵϰؼ
+12 SQL ļ
+resources/sql/schema.sql
+д SQL
+Щ
+sys_user
+job
+resume
+application_record
+favorite_job
+guide_doc
+interview_record
+resources/sql/data.sql
+дʼݣ
+һְ˺
+һ HR ˺
+10 λ
+3  PDF ָ
+1 ݳʼ
+3 Ͷݼ¼
+ ݿ
+ǺҪʵıṹ
+sys_user
+ֶΣ
+id
+username
+password
+role
+email
+phone
+avatar
+status
+create_time
+update_time
+job
+ֶΣ
+id
+title
+company
+city
+category
+type
+salary_min
+salary_max
+tags
+description
+requirement
+status
+publish_time
+create_time
+update_time
+resume
+ֶΣ
+id
+user_id
+title
+basic_info_json
+education_json
+experience_json
+project_json
+skills_json
+template_code
+pdf_url
+complete_score
+create_time
+update_time
+application_record
+ֶΣ
+id
+user_id
+job_id
+resume_id
+stage
+hr_note
+match_score
+apply_time
+update_time
+favorite_job
+ֶΣ
+id
+user_id
+job_id
+create_time
+guide_doc
+ֶΣ
+id
+code
+title
+file_url
+sort_num
+create_time
+interview_record
+ֶΣ
+id
+application_id
+round_num
+interview_time
+interviewer
+status
+create_time
+ ǰҳͺ˽ӿһһӦ
+¼ҳ
+ǰ LoginView.vue
+ POST /api/auth/login
+עҳ
+ǰ RegisterView.vue
+ POST /api/auth/register
+λ
+ǰ JobCenterView.vue
+ GET /api/jobs
+λ
+ǰ JobDetailView.vue
+ GET /api/jobs/{id}
+ҵļ
+ǰ ResumeCenterView.vue
+ GET /api/resumes/me
+ POST /api/resumes/save
+ POST /api/resumes/upload
+ҵͶ
+ǰ MyApplicationsView.vue
+ GET /api/applications/me
+ҵղ
+ǰ MyFavoritesView.vue
+ GET /api/favorites/me
+ְָ
+ǰ GuideCenterView.vue
+ GET /api/guides
+HR λ
+ǰ HrJobManageView.vue
+ GET /api/hr/jobs
+ POST /api/hr/jobs
+ PUT /api/hr/jobs
+ DELETE /api/hr/jobs/{id}
+HR ѡ˹
+ǰ HrCandidateManageView.vue
+ GET /api/hr/candidates
+HR ɸѡ
+ǰ HrResumeReviewView.vue
+ GET /api/hr/candidates/{applicationId}
+ PUT /api/hr/candidates/stage
+ PUT /api/hr/candidates/note
+HR ͳ
+ǰ HrStatisticsView.vue
+ GET /api/hr/statistics/overview
+ Codex ʵ˳
+˳Ҳһ
+һ ȴĿ¼ offerflow\nڶ  frontend  backend Ŀ\n ǰ package.json vite.config.js main.js App.vue\nĲ  router store api utils constants\n岽  layout \n ְ߶ҳ\n߲  HR ҳ\nڰ˲  CanvasPdf  ColumnFrame\nھŲ ɺ pom.xml application  OfferFlowApplication\nʮ  common config entity dto vo mapper service controller\nʮһ  mapper xml  sql ļ\nʮ ɳʼ\nʮ ǰ˽ӿ\nʮĲ ޸ҳת ״̬ ҳ PDF Ԥ
+ʮ ǽ Codex ʱؼĲҪ
+Ҳһ
+Ҫ\n\nһ ǰҳ涼Ҫֱӷʺʾ\n мݶҪдҳ ߺ˽ӿ\n ˷ؽṹͳһ\n бҪҳ\n HR λͺѡ˹Ҫ֧ѯ\n ResumeCenterView ҷק\n HrResumeReviewView ҷק\n GuideCenterView Ķ PDF\n LayoutTabBar  л رձǩ\nʮ KeepAlive ҳҳЧ\nʮһ · token  role\nʮ Vuex  token ûϢ tabs keeps ݸ\nʮ 벻Ҫʡ Ҫֻɿտļ\nʮ ȱ֤ ʽŻ
+ʮһ ʺֱ Codex ĽĿ
+һ汾
+ǰ
+¼ҳ
+עҳ
+HomeFrame
+LayoutMenu
+LayoutHead
+LayoutTabBar
+ApplicantDashboard
+JobCenterView
+JobDetailView
+ResumeCenterView
+MyApplicationsView
+GuideCenterView
+HrDashboard
+HrJobManageView
+HrCandidateManageView
+HrResumeReviewView
+HrStatisticsView
+CanvasPdf
+ColumnFrame
+
+¼ע
+λҳ
+ PDF ַ
+Ͷݷҳ
+HR λ
+ѡ˷ҳ״̬޸
+ͳƸ
+MySQL ͳʼ

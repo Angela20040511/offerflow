@@ -1,0 +1,349 @@
+一 接口总规范
+1 接口前缀
+全部接口统一使用：
+/api
+2 认证方式
+除登录注册外，全部接口都要求请求头携带 token。
+Authorization: Bearer {token}
+3 请求格式
+GET
+用于分页查询、详情查询、筛选查询。\n参数放在 query 中。
+示例
+GET /api/jobs?pageNum=1&pageSize=10&keyword=vue&city=上海
+POST
+用于新增、登录、投递、收藏、复杂查询。\n参数放在 JSON 请求体中。
+示例
+{\n  "username": "student01",\n  "password": "123456"\n}
+PUT
+用于更新。
+DELETE
+用于删除。
+4 统一返回结构
+所有接口统一返回：
+{\n  "code": 200,\n  "msg": "success",\n  "data": {}\n}
+分页返回结构
+分页接口的 data 统一写成：
+{\n  "list": [],\n  "total": 0,\n  "pageNum": 1,\n  "pageSize": 10\n}
+5 通用状态码
+200 成功\n400 参数错误\n401 未登录或 token 无效\n403 无权限\n404 数据不存在\n409 数据冲突\n500 服务器异常
+6 通用字段规范
+时间字段
+统一格式：
+2026-03-12 14:30:00
+主键字段
+统一使用：
+id
+角色字段
+统一使用：
+APPLICANT\nHR
+岗位状态
+统一使用：
+OPEN\nCLOSED\nDRAFT
+投递阶段
+统一使用：
+APPLIED\nSCREENING\nINTERVIEW\nOFFER\nREJECTED\nWITHDRAWN
+二 核心数据对象定义
+1 用户对象
+{\n  "id": 1,\n  "username": "student01",\n  "role": "APPLICANT",\n  "email": "student01@example.com",\n  "phone": "13800000000",\n  "avatar": "/static/avatar/default.png",\n  "status": 1,\n  "createTime": "2026-03-12 10:00:00"\n}
+2 岗位对象
+{\n  "id": 101,\n  "title": "前端开发实习生",\n  "company": "星河科技",\n  "city": "上海",\n  "category": "前端开发",\n  "type": "实习",\n  "salaryMin": 180,\n  "salaryMax": 250,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "负责前端页面开发与维护",\n  "requirement": "熟悉 Vue 3 和前端工程化",\n  "status": "OPEN",\n  "publishTime": "2026-03-12 10:00:00"\n}
+3 简历对象
+{\n  "id": 201,\n  "userId": 1,\n  "title": "默认简历",\n  "basicInfo": {\n    "name": "张三",\n    "phone": "13800000000",\n    "email": "student01@example.com",\n    "school": "某某大学",\n    "major": "软件工程",\n    "intention": "前端开发实习"\n  },\n  "educationList": [],\n  "experienceList": [],\n  "projectList": [],\n  "skillList": [],\n  "templateCode": "classic",\n  "pdfUrl": "/files/resume/201.pdf",\n  "completeScore": 86,\n  "updateTime": "2026-03-12 11:00:00"\n}
+4 投递对象
+{\n  "id": 301,\n  "jobId": 101,\n  "jobTitle": "前端开发实习生",\n  "company": "星河科技",\n  "resumeId": 201,\n  "resumeTitle": "默认简历",\n  "stage": "SCREENING",\n  "matchScore": 88,\n  "hrNote": "基础不错",\n  "applyTime": "2026-03-12 12:00:00",\n  "updateTime": "2026-03-12 13:00:00"\n}
+5 PDF 指南对象
+{\n  "id": 1,\n  "code": "resume-guide",\n  "title": "简历撰写指南",\n  "fileUrl": "/pdf/resume-guide.pdf",\n  "sortNum": 1\n}
+三 认证模块接口
+1 登录
+请求
+POST /api/auth/login
+请求体
+{\n  "username": "student01",\n  "password": "123456",\n  "role": "APPLICANT"\n}
+返回
+{\n  "code": 200,\n  "msg": "登录成功",\n  "data": {\n    "token": "token_xxx",\n    "userId": 1,\n    "username": "student01",\n    "role": "APPLICANT",\n    "avatar": "/static/avatar/default.png"\n  }\n}
+失败返回
+{\n  "code": 401,\n  "msg": "用户名或密码错误",\n  "data": null\n}
+2 注册
+请求
+POST /api/auth/register
+请求体
+{\n  "username": "student02",\n  "password": "123456",\n  "confirmPassword": "123456",\n  "email": "student02@example.com",\n  "phone": "13800000001",\n  "role": "APPLICANT"\n}
+返回
+{\n  "code": 200,\n  "msg": "注册成功",\n  "data": {\n    "userId": 2\n  }\n}
+3 获取当前登录用户信息
+请求
+GET /api/auth/profile
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 1,\n    "username": "student01",\n    "role": "APPLICANT",\n    "email": "student01@example.com",\n    "phone": "13800000000",\n    "avatar": "/static/avatar/default.png"\n  }\n}
+四 求职者首页模块接口
+1 求职者首页概览
+请求
+GET /api/dashboard/applicant/overview
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "applicationCount": 12,\n    "interviewCount": 2,\n    "favoriteCount": 5,\n    "resumeCompleteScore": 86,\n    "recentApplications": [\n      {\n        "id": 301,\n        "jobTitle": "前端开发实习生",\n        "company": "星河科技",\n        "stage": "SCREENING",\n        "applyTime": "2026-03-12 12:00:00"\n      }\n    ],\n    "recommendJobs": [\n      {\n        "id": 101,\n        "title": "前端开发实习生",\n        "company": "星河科技",\n        "city": "上海",\n        "salaryMin": 180,\n        "salaryMax": 250\n      }\n    ]\n  }\n}
+五 岗位中心接口
+1 岗位分页查询
+请求
+GET /api/jobs
+Query 参数
+pageNum\npageSize\nkeyword\ncity\ncategory\ntype\nsalaryMin\nsalaryMax\nstatus\nsortBy
+示例
+GET /api/jobs?pageNum=1&pageSize=10&keyword=vue&city=上海&category=前端开发&type=实习
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 101,\n        "title": "前端开发实习生",\n        "company": "星河科技",\n        "city": "上海",\n        "category": "前端开发",\n        "type": "实习",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "tags": ["Vue", "JavaScript", "Element Plus"],\n        "status": "OPEN",\n        "publishTime": "2026-03-12 10:00:00",\n        "isFavorite": true,\n        "isApplied": false\n      }\n    ],\n    "total": 58,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 岗位详情
+请求
+GET /api/jobs/{id}
+示例
+GET /api/jobs/101
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 101,\n    "title": "前端开发实习生",\n    "company": "星河科技",\n    "city": "上海",\n    "category": "前端开发",\n    "type": "实习",\n    "salaryMin": 180,\n    "salaryMax": 250,\n    "tags": ["Vue", "JavaScript", "Element Plus"],\n    "description": "负责前端页面开发与维护",\n    "requirement": "熟悉 Vue 3 和前端工程化",\n    "status": "OPEN",\n    "publishTime": "2026-03-12 10:00:00",\n    "isFavorite": true,\n    "isApplied": false,\n    "companyInfo": {\n      "name": "星河科技",\n      "size": "100到499人",\n      "industry": "互联网",\n      "intro": "一家专注企业数字化的公司"\n    }\n  }\n}
+六 收藏模块接口
+1 收藏岗位
+请求
+POST /api/favorites
+请求体
+{\n  "jobId": 101\n}
+返回
+{\n  "code": 200,\n  "msg": "收藏成功",\n  "data": true\n}
+2 取消收藏
+请求
+DELETE /api/favorites/{jobId}
+示例
+DELETE /api/favorites/101
+返回
+{\n  "code": 200,\n  "msg": "取消收藏成功",\n  "data": true\n}
+3 我的收藏分页
+请求
+GET /api/favorites/me
+Query 参数
+pageNum\npageSize\nkeyword\ncity
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "jobId": 101,\n        "title": "前端开发实习生",\n        "company": "星河科技",\n        "city": "上海",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "favoriteTime": "2026-03-12 11:00:00"\n      }\n    ],\n    "total": 5,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+七 简历模块接口
+1 获取我的默认简历
+请求
+GET /api/resumes/me
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 201,\n    "userId": 1,\n    "title": "默认简历",\n    "basicInfo": {\n      "name": "张三",\n      "phone": "13800000000",\n      "email": "student01@example.com",\n      "school": "某某大学",\n      "major": "软件工程",\n      "intention": "前端开发实习"\n    },\n    "educationList": [\n      {\n        "school": "某某大学",\n        "major": "软件工程",\n        "startDate": "2022-09",\n        "endDate": "2026-06",\n        "degree": "本科"\n      }\n    ],\n    "experienceList": [],\n    "projectList": [],\n    "skillList": ["Vue 3", "JavaScript", "MySQL"],\n    "templateCode": "classic",\n    "pdfUrl": "/files/resume/201.pdf",\n    "completeScore": 86,\n    "updateTime": "2026-03-12 11:00:00"\n  }\n}
+2 保存简历草稿
+请求
+POST /api/resumes/save
+请求体
+{\n  "id": 201,\n  "title": "默认简历",\n  "basicInfo": {\n    "name": "张三",\n    "phone": "13800000000",\n    "email": "student01@example.com",\n    "school": "某某大学",\n    "major": "软件工程",\n    "intention": "前端开发实习"\n  },\n  "educationList": [\n    {\n      "school": "某某大学",\n      "major": "软件工程",\n      "startDate": "2022-09",\n      "endDate": "2026-06",\n      "degree": "本科"\n    }\n  ],\n  "experienceList": [\n    {\n      "company": "云帆科技",\n      "position": "前端实习生",\n      "startDate": "2025-07",\n      "endDate": "2025-09",\n      "content": "负责 Vue 页面开发"\n    }\n  ],\n  "projectList": [\n    {\n      "name": "招聘平台项目",\n      "role": "前端开发",\n      "content": "负责登录 路由 权限 表格和 PDF 预览"\n    }\n  ],\n  "skillList": ["Vue 3", "Element Plus", "Axios"],\n  "templateCode": "classic"\n}
+返回
+{\n  "code": 200,\n  "msg": "保存成功",\n  "data": {\n    "id": 201,\n    "completeScore": 92,\n    "updateTime": "2026-03-12 15:20:00"\n  }\n}
+3 上传 PDF 简历
+请求
+POST /api/resumes/upload
+Content Type
+multipart/form-data
+表单字段
+file\nresumeId
+返回
+{\n  "code": 200,\n  "msg": "上传成功",\n  "data": {\n    "resumeId": 201,\n    "pdfUrl": "/files/resume/201.pdf"\n  }\n}
+4 获取简历 PDF 地址
+请求
+GET /api/resumes/{id}/pdf
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "resumeId": 201,\n    "pdfUrl": "/files/resume/201.pdf"\n  }\n}
+5 获取简历完整度
+请求
+GET /api/resumes/{id}/complete-score
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "resumeId": 201,\n    "completeScore": 92\n  }\n}
+八 投递模块接口
+1 投递岗位
+请求
+POST /api/applications
+请求体
+{\n  "jobId": 101,\n  "resumeId": 201\n}
+返回
+{\n  "code": 200,\n  "msg": "投递成功",\n  "data": {\n    "applicationId": 301,\n    "stage": "APPLIED",\n    "applyTime": "2026-03-12 16:00:00"\n  }\n}
+失败返回
+{\n  "code": 409,\n  "msg": "该岗位已投递",\n  "data": null\n}
+2 我的投递分页
+请求
+GET /api/applications/me
+Query 参数
+pageNum\npageSize\nstage\nkeyword
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 301,\n        "jobId": 101,\n        "jobTitle": "前端开发实习生",\n        "company": "星河科技",\n        "resumeId": 201,\n        "resumeTitle": "默认简历",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "hrNote": "基础不错",\n        "applyTime": "2026-03-12 16:00:00",\n        "updateTime": "2026-03-12 18:00:00"\n      }\n    ],\n    "total": 12,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+3 撤回投递
+请求
+PUT /api/applications/{id}/withdraw
+返回
+{\n  "code": 200,\n  "msg": "撤回成功",\n  "data": true\n}
+九 求职指南模块接口
+1 获取指南目录
+请求
+GET /api/guides
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "id": 1,\n      "code": "resume-guide",\n      "title": "简历撰写指南",\n      "fileUrl": "/pdf/resume-guide.pdf",\n      "sortNum": 1\n    },\n    {\n      "id": 2,\n      "code": "interview-guide",\n      "title": "面试准备指南",\n      "fileUrl": "/pdf/interview-guide.pdf",\n      "sortNum": 2\n    }\n  ]\n}
+2 获取单个指南详情
+请求
+GET /api/guides/{code}
+示例
+GET /api/guides/resume-guide
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "id": 1,\n    "code": "resume-guide",\n    "title": "简历撰写指南",\n    "fileUrl": "/pdf/resume-guide.pdf",\n    "sortNum": 1\n  }\n}
+十 HR 首页模块接口
+1 HR 首页概览
+请求
+GET /api/hr/dashboard/overview
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "openJobCount": 8,\n    "newApplicationCount": 15,\n    "screeningCount": 20,\n    "interviewCount": 6,\n    "recentApplications": [\n      {\n        "applicationId": 301,\n        "candidateName": "张三",\n        "jobTitle": "前端开发实习生",\n        "stage": "SCREENING",\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ]\n  }\n}
+十一 HR 岗位管理接口
+1 HR 岗位分页
+请求
+GET /api/hr/jobs
+Query 参数
+pageNum\npageSize\nkeyword\ncity\ncategory\nstatus
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "id": 101,\n        "title": "前端开发实习生",\n        "company": "星河科技",\n        "city": "上海",\n        "category": "前端开发",\n        "type": "实习",\n        "salaryMin": 180,\n        "salaryMax": 250,\n        "status": "OPEN",\n        "applicationCount": 18,\n        "publishTime": "2026-03-12 10:00:00"\n      }\n    ],\n    "total": 8,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 新增岗位
+请求
+POST /api/hr/jobs
+请求体
+{\n  "title": "前端开发实习生",\n  "company": "星河科技",\n  "city": "上海",\n  "category": "前端开发",\n  "type": "实习",\n  "salaryMin": 180,\n  "salaryMax": 250,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "负责前端页面开发与维护",\n  "requirement": "熟悉 Vue 3 和前端工程化",\n  "status": "OPEN"\n}
+返回
+{\n  "code": 200,\n  "msg": "新增成功",\n  "data": {\n    "id": 101\n  }\n}
+3 修改岗位
+请求
+PUT /api/hr/jobs/{id}
+请求体
+{\n  "title": "前端开发实习生",\n  "company": "星河科技",\n  "city": "上海",\n  "category": "前端开发",\n  "type": "实习",\n  "salaryMin": 200,\n  "salaryMax": 280,\n  "tags": ["Vue", "JavaScript", "Element Plus"],\n  "description": "负责前端页面开发与维护",\n  "requirement": "熟悉 Vue 3 和前端工程化",\n  "status": "OPEN"\n}
+返回
+{\n  "code": 200,\n  "msg": "修改成功",\n  "data": true\n}
+4 删除岗位
+请求
+DELETE /api/hr/jobs/{id}
+返回
+{\n  "code": 200,\n  "msg": "删除成功",\n  "data": true\n}
+5 修改岗位状态
+请求
+PUT /api/hr/jobs/{id}/status
+请求体
+{\n  "status": "CLOSED"\n}
+返回
+{\n  "code": 200,\n  "msg": "状态更新成功",\n  "data": true\n}
+十二 HR 候选人管理接口
+1 候选人分页查询
+请求
+GET /api/hr/candidates
+Query 参数
+pageNum\npageSize\nkeyword\njobId\nschool\nmajor\nstage\nscoreMin\nscoreMax
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "applicationId": 301,\n        "candidateId": 1,\n        "candidateName": "张三",\n        "school": "某某大学",\n        "major": "软件工程",\n        "jobId": 101,\n        "jobTitle": "前端开发实习生",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ],\n    "total": 25,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+2 候选人详情
+请求
+GET /api/hr/candidates/{applicationId}
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "applicationId": 301,\n    "candidateId": 1,\n    "candidateName": "张三",\n    "email": "student01@example.com",\n    "phone": "13800000000",\n    "school": "某某大学",\n    "major": "软件工程",\n    "jobId": 101,\n    "jobTitle": "前端开发实习生",\n    "stage": "SCREENING",\n    "matchScore": 88,\n    "hrNote": "基础不错",\n    "resumeId": 201,\n    "resumePdfUrl": "/files/resume/201.pdf",\n    "keywordHits": ["Vue", "Element Plus", "MySQL"],\n    "applyTime": "2026-03-12 16:00:00",\n    "updateTime": "2026-03-12 18:00:00"\n  }\n}
+3 修改候选人阶段
+请求
+PUT /api/hr/candidates/stage
+请求体
+{\n  "applicationId": 301,\n  "stage": "INTERVIEW"\n}
+返回
+{\n  "code": 200,\n  "msg": "阶段更新成功",\n  "data": true\n}
+4 保存 HR 备注
+请求
+PUT /api/hr/candidates/note
+请求体
+{\n  "applicationId": 301,\n  "hrNote": "候选人基础不错，建议进入面试"\n}
+返回
+{\n  "code": 200,\n  "msg": "备注保存成功",\n  "data": true\n}
+5 获取候选人匹配度明细
+请求
+GET /api/hr/candidates/{applicationId}/match-score
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "totalScore": 88,\n    "skillScore": 35,\n    "majorScore": 20,\n    "projectScore": 18,\n    "experienceScore": 15,\n    "matchedSkills": ["Vue", "Element Plus", "MySQL"],\n    "missingSkills": ["TypeScript"]\n  }\n}
+十三 HR 投递记录接口
+1 HR 投递分页
+请求
+GET /api/hr/applications
+Query 参数
+pageNum\npageSize\njobId\nstage\nkeyword
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "list": [\n      {\n        "applicationId": 301,\n        "candidateName": "张三",\n        "jobTitle": "前端开发实习生",\n        "stage": "SCREENING",\n        "matchScore": 88,\n        "applyTime": "2026-03-12 16:00:00"\n      }\n    ],\n    "total": 40,\n    "pageNum": 1,\n    "pageSize": 10\n  }\n}
+十四 HR 统计接口
+1 统计概览
+请求
+GET /api/hr/statistics/overview
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": {\n    "openJobCount": 8,\n    "applicationCount": 126,\n    "screeningCount": 52,\n    "interviewCount": 18,\n    "offerCount": 4,\n    "rejectedCount": 30\n  }\n}
+2 招聘漏斗
+请求
+GET /api/hr/statistics/funnel
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "stage": "APPLIED",\n      "count": 126\n    },\n    {\n      "stage": "SCREENING",\n      "count": 52\n    },\n    {\n      "stage": "INTERVIEW",\n      "count": 18\n    },\n    {\n      "stage": "OFFER",\n      "count": 4\n    },\n    {\n      "stage": "REJECTED",\n      "count": 30\n    }\n  ]\n}
+3 各岗位投递量统计
+请求
+GET /api/hr/statistics/job-distribution
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "jobId": 101,\n      "jobTitle": "前端开发实习生",\n      "count": 35\n    },\n    {\n      "jobId": 102,\n      "jobTitle": "后端开发实习生",\n      "count": 28\n    }\n  ]\n}
+十五 面试模块接口
+这个模块不是最小版本必须，但建议一起定好。
+1 新增面试安排
+请求
+POST /api/hr/interviews
+请求体
+{\n  "applicationId": 301,\n  "roundNum": 1,\n  "interviewTime": "2026-03-15 14:00:00",\n  "interviewer": "李老师"\n}
+返回
+{\n  "code": 200,\n  "msg": "面试安排成功",\n  "data": {\n    "id": 1\n  }\n}
+2 查询面试记录
+请求
+GET /api/hr/interviews?applicationId=301
+返回
+{\n  "code": 200,\n  "msg": "success",\n  "data": [\n    {\n      "id": 1,\n      "applicationId": 301,\n      "roundNum": 1,\n      "interviewTime": "2026-03-15 14:00:00",\n      "interviewer": "李老师",\n      "status": "PLANNED"\n    }\n  ]\n}
+十六 接口与前端页面映射
+登录页
+POST /api/auth/login
+POST /api/auth/register
+GET /api/auth/profile
+求职者首页
+GET /api/dashboard/applicant/overview
+岗位中心
+GET /api/jobs
+GET /api/jobs/{id}
+我的简历
+GET /api/resumes/me
+POST /api/resumes/save
+POST /api/resumes/upload
+GET /api/resumes/{id}/pdf
+GET /api/resumes/{id}/complete-score
+我的投递
+POST /api/applications
+GET /api/applications/me
+PUT /api/applications/{id}/withdraw
+我的收藏
+POST /api/favorites
+DELETE /api/favorites/{jobId}
+GET /api/favorites/me
+求职指南
+GET /api/guides
+GET /api/guides/{code}
+HR 首页
+GET /api/hr/dashboard/overview
+HR 岗位管理
+GET /api/hr/jobs
+POST /api/hr/jobs
+PUT /api/hr/jobs/{id}
+DELETE /api/hr/jobs/{id}
+PUT /api/hr/jobs/{id}/status
+HR 候选人管理
+GET /api/hr/candidates
+GET /api/hr/candidates/{applicationId}
+PUT /api/hr/candidates/stage
+PUT /api/hr/candidates/note
+GET /api/hr/candidates/{applicationId}/match-score
+HR 投递记录
+GET /api/hr/applications
+HR 统计
+GET /api/hr/statistics/overview
+GET /api/hr/statistics/funnel
+GET /api/hr/statistics/job-distribution
+十七 给 Codex 的实现要求
+把下面这一段直接追加给 Codex：
+请严格按以下接口文档实现前后端\n\n一 所有接口前缀统一为 /api\n二 返回结构统一为 code msg data\n三 所有列表接口必须返回 list total pageNum pageSize\n四 登录后前端把 token 放到 Authorization 请求头\n五 Spring Boot Controller 按接口文档实现\n六 MyBatis XML 必须实现岗位分页动态 SQL\n七 前端 axios 请求文件要一一对应这些接口\n八 ResumeCenterView 和 HrResumeReviewView 要调用 PDF 接口并使用 CanvasPdf 展示\n九 所有页面不要写死数据 必须走真实接口\n十 先保证接口和页面闭环跑通

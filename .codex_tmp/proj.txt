@@ -1,0 +1,1173 @@
+一 先给 Codex 的总任务说明
+把下面整段直接发给 Codex。
+项目名称 OfferFlow\n\n请生成一个完整可运行的前后端分离项目\n\n前端技术要求\nVue 3\nVite\nElement Plus\nVue Router\nVuex\nAxios\npdfjs-dist\n\n后端技术要求\nSpring Boot\nMySQL\nMyBatis\nController Service Mapper 三层架构\n\n业务主题\n实习招聘与简历投递平台\n\n角色\n求职者\nHR 管理员\n\n必须实现的核心功能\n一 登录注册与鉴权\n二 左侧菜单 顶部头部 模拟 Tabs KeepAlive 的系统壳\n三 求职者端 岗位浏览 岗位详情 简历编辑 PDF 简历预览 投递记录 收藏岗位 求职指南 PDF 阅读\n四 HR 端 岗位管理 候选人管理 简历筛选 招聘统计\n五 前端使用 axios 二次封装\n六 后端使用统一返回结构\n七 MyBatis 使用 XML 映射\n八 至少有岗位分页查询的动态 SQL\n九 PDF 在线预览使用 pdfjs-dist\n十 简历编辑页和简历筛选页都使用左右分栏拖拽布局\n十一 路由使用 meta 做鉴权和角色控制\n十二 Vuex 管理 token 用户信息 Tabs KeepAlive 列表 简历草稿\n\n开发风格要求\n一 前端全部使用 script setup\n二 组件和文件使用清晰分层\n三 后端使用 DTO VO Entity 分离\n四 数据库设计清晰\n五 前端页面可直接演示\n六 代码带必要注释\n七 先保证完整性和可运行性 再追求复杂特效\n\n项目结构要求\n项目根目录下分成 frontend 和 backend 两个子项目\n前端和后端都要给出完整目录\n每个文件都生成内容\n接口路径前缀统一使用 /api\n前端开发环境通过 Vite 代理转发到后端\n后端本地端口使用 8080\n前端本地端口使用 5173\n\n请先严格按照我给出的目录结构创建项目\n然后逐文件实现\n不要改名
+二 项目根目录
+offerflow\n├─ frontend\n└─ backend
+三 前端目录结构
+frontend\n├─ public\n│  ├─ pdf\n│  │  ├─ resume-guide.pdf\n│  │  ├─ interview-guide.pdf\n│  │  └─ portfolio-guide.pdf\n│  └─ favicon.ico\n├─ src\n│  ├─ api\n│  │  ├─ request.js\n│  │  ├─ auth.js\n│  │  ├─ job.js\n│  │  ├─ resume.js\n│  │  ├─ application.js\n│  │  ├─ favorite.js\n│  │  ├─ candidate.js\n│  │  ├─ stats.js\n│  │  └─ guide.js\n│  ├─ assets\n│  │  ├─ images\n│  │  │  ├─ login-banner.png\n│  │  │  ├─ empty-data.png\n│  │  │  └─ logo.png\n│  │  └─ styles\n│  │     ├─ reset.css\n│  │     ├─ global.css\n│  │     ├─ element.css\n│  │     └─ variables.css\n│  ├─ components\n│  │  ├─ layout\n│  │  │  ├─ HomeFrame.vue\n│  │  │  ├─ LayoutMenu.vue\n│  │  │  ├─ LayoutHead.vue\n│  │  │  ├─ LayoutTabBar.vue\n│  │  │  └─ PageFrame.vue\n│  │  ├─ common\n│  │  │  ├─ StatusTag.vue\n│  │  │  ├─ EmptyState.vue\n│  │  │  ├─ SearchBar.vue\n│  │  │  ├─ StatCard.vue\n│  │  │  ├─ ConfirmDialog.vue\n│  │  │  ├─ TableAutoWidth.js\n│  │  │  └─ PaginationBar.vue\n│  │  ├─ pdf\n│  │  │  └─ CanvasPdf.vue\n│  │  ├─ split\n│  │  │  └─ ColumnFrame.vue\n│  │  ├─ resume\n│  │  │  ├─ ResumeEditor.vue\n│  │  │  ├─ ResumePreview.vue\n│  │  │  ├─ ResumeBasicForm.vue\n│  │  │  ├─ ResumeEducationForm.vue\n│  │  │  ├─ ResumeExperienceForm.vue\n│  │  │  ├─ ResumeProjectForm.vue\n│  │  │  ├─ ResumeSkillForm.vue\n│  │  │  ├─ ResumeTemplateSelector.vue\n│  │  │  └─ ResumeUploadPanel.vue\n│  │  ├─ job\n│  │  │  ├─ JobFilterBar.vue\n│  │  │  ├─ JobCardList.vue\n│  │  │  ├─ JobCard.vue\n│  │  │  ├─ JobDetailPanel.vue\n│  │  │  └─ FavoriteButton.vue\n│  │  ├─ application\n│  │  │  ├─ ApplicationFilterBar.vue\n│  │  │  └─ ApplicationTable.vue\n│  │  └─ hr\n│  │     ├─ HrJobToolbar.vue\n│  │     ├─ HrJobTable.vue\n│  │     ├─ CandidateFilterBar.vue\n│  │     ├─ CandidateTable.vue\n│  │     ├─ ResumeReviewPanel.vue\n│  │     ├─ StageActionBar.vue\n│  │     └─ StatsPanels.vue\n│  ├─ constants\n│  │  ├─ menu.js\n│  │  ├─ routes.js\n│  │  ├─ role.js\n│  │  ├─ status.js\n│  │  └─ resume-template.js\n│  ├─ router\n│  │  └─ index.js\n│  ├─ store\n│  │  ├─ index.js\n│  │  └─ modules\n│  │     ├─ user.js\n│  │     ├─ tabs.js\n│  │     ├─ resume.js\n│  │     ├─ job.js\n│  │     └─ guide.js\n│  ├─ utils\n│  │  ├─ auth.js\n│  │  ├─ storage.js\n│  │  ├─ file.js\n│  │  ├─ pdf.js\n│  │  ├─ score.js\n│  │  ├─ format.js\n│  │  ├─ validate.js\n│  │  └─ menu.js\n│  ├─ views\n│  │  ├─ login\n│  │  │  ├─ LoginView.vue\n│  │  │  └─ RegisterView.vue\n│  │  ├─ dashboard\n│  │  │  ├─ ApplicantDashboard.vue\n│  │  │  └─ HrDashboard.vue\n│  │  ├─ job\n│  │  │  ├─ JobCenterView.vue\n│  │  │  └─ JobDetailView.vue\n│  │  ├─ resume\n│  │  │  └─ ResumeCenterView.vue\n│  │  ├─ application\n│  │  │  ├─ MyApplicationsView.vue\n│  │  │  └─ MyFavoritesView.vue\n│  │  ├─ guide\n│  │  │  └─ GuideCenterView.vue\n│  │  └─ hr\n│  │     ├─ HrJobManageView.vue\n│  │     ├─ HrCandidateManageView.vue\n│  │     ├─ HrApplicationManageView.vue\n│  │     ├─ HrResumeReviewView.vue\n│  │     └─ HrStatisticsView.vue\n│  ├─ App.vue\n│  └─ main.js\n├─ .env.development\n├─ .env.production\n├─ package.json\n└─ vite.config.js
+四 前端每个文件该写什么
+1 根文件
+src/main.js
+写应用入口。\n职责如下：
+创建 Vue 应用实例
+注册 Vuex
+注册 Vue Router
+注册 Element Plus
+导入全局样式
+挂载 App.vue
+这个入口和讲义里 main.js 负责创建实例并挂载根组件是一致的。
+修改 Vue前端实训课程体系
+src/App.vue
+只做最薄的一层壳：
+放一个 router-view
+不写复杂业务
+全局布局统一由 HomeFrame.vue 承担
+2 Vite 配置
+vite.config.js
+写这些内容：
+@ 指向 src
+Element Plus 自动导入
+vue、vue-router、vuex 自动导入
+/api 代理到 http://localhost:8080
+讲义里明确要求 vite.config.js 做别名、自动导入和代理配置。
+修改 Vue前端实训课程体系
+.env.development
+写前端开发环境变量：
+VITE_APP_TITLE=OfferFlow
+VITE_BASE_API=/api
+.env.production
+写生产环境变量：
+VITE_APP_TITLE=OfferFlow
+VITE_BASE_API=/api
+3 路由
+src/router/index.js
+这是前端最关键的文件之一。\n要写：
+所有路由定义
+嵌套路由
+每个路由的 meta
+requiresAuth
+role
+title
+keepAlive
+全局前置守卫
+未登录跳转登录页
+角色不匹配跳转对应首页
+登录后自动恢复 Tabs 和缓存页
+讲义里要求路由、嵌套路由、元信息、全局守卫都要落地。
+修改 Vue前端实训课程体系
+修改 Vue前端实训课程体系
+路由清单
+建议这样写：
+/login
+/register
+/home
+/home/applicant/dashboard
+/home/applicant/jobs
+/home/applicant/jobs/:id
+/home/applicant/resume
+/home/applicant/applications
+/home/applicant/favorites
+/home/applicant/guide
+/home/hr/dashboard
+/home/hr/jobs
+/home/hr/candidates
+/home/hr/applications
+/home/hr/review/:id
+/home/hr/statistics
+4 Vuex
+src/store/index.js
+注册所有模块并导出 store。
+src/store/modules/user.js
+写这些状态：
+token
+userId
+username
+role
+avatar
+写这些 getter：
+isLogin
+role
+token
+username
+写这些 mutation：
+setToken
+setUserInfo
+clearUser
+写这些 action：
+login
+getProfile
+logout
+讲义明确有 Vuex 模块、token 与 username 存储。
+修改 Vue前端实训课程体系
+src/store/modules/tabs.js
+写系统多标签页状态：
+当前激活页
+已打开标签数组
+KeepAlive 组件名数组
+写这些方法：
+新增标签
+激活标签
+删除标签
+重置标签
+设置菜单同步
+这是讲义里模拟路由 Tabs 与 KeepAlive 的核心。
+修改 Vue前端实训课程体系
+src/store/modules/resume.js
+写简历编辑状态：
+简历草稿对象
+当前模板
+PDF 地址
+最近保存时间
+写这些功能：
+更新字段
+批量更新
+重置草稿
+保存草稿
+读取草稿
+这块对应讲义 watch 深度侦听和暂存提交。
+修改 Vue前端实训课程体系
+src/store/modules/job.js
+写岗位筛选条件：
+关键词
+城市
+类别
+薪资区间
+实习形式
+页码
+每页数量
+src/store/modules/guide.js
+写 PDF 指南目录状态：
+当前文档
+当前页
+缩放比例
+5 Axios
+src/api/request.js
+必须写成通用 axios 实例：
+baseURL
+超时时间
+请求拦截器自动加 token
+响应拦截器统一处理 code
+401 自动登出
+统一错误提示
+导出 get、post、put、delete
+讲义里有 axios 二次封装、请求拦截、响应拦截、统一管理。
+修改 Vue前端实训课程体系
+src/api/auth.js
+写这些接口函数：
+登录
+注册
+获取当前用户信息
+src/api/job.js
+写这些接口函数：
+岗位分页
+岗位详情
+新增岗位
+编辑岗位
+删除岗位
+上下线岗位
+src/api/resume.js
+写这些接口函数：
+获取我的简历
+保存简历草稿
+上传 PDF
+获取简历 PDF 地址
+获取简历完整度
+src/api/application.js
+写这些接口函数：
+投递岗位
+获取我的投递
+撤回投递
+HR 获取投递分页
+HR 修改投递阶段
+HR 写评价
+src/api/favorite.js
+写这些接口函数：
+收藏岗位
+取消收藏
+获取收藏列表
+src/api/candidate.js
+写这些接口函数：
+候选人分页
+候选人详情
+候选人匹配度
+候选人阶段流转
+src/api/stats.js
+写这些接口函数：
+求职者首页统计
+HR 首页统计
+HR 招聘漏斗
+HR 岗位投递量统计
+src/api/guide.js
+写这些接口函数：
+获取 PDF 指南目录
+获取当前文档信息
+6 系统框架组件
+src/components/layout/HomeFrame.vue
+系统总壳。\n负责：
+左侧菜单
+顶部头部
+顶部 Tabs
+中间 RouterView
+KeepAlive
+根据当前角色切菜单
+进入系统后加载首页
+讲义里系统首页框架和加入模拟 Tabs 都落在这个组件。
+修改 Vue前端实训课程体系
+src/components/layout/LayoutMenu.vue
+左侧菜单组件。\n负责：
+根据当前角色生成菜单
+支持多级菜单
+支持高亮当前菜单
+和 Tabs 同步
+菜单点击触发打开页签
+讲义里 LayoutMenu 对应嵌套路由、循环渲染和菜单与 Tabs 同步。
+修改 Vue前端实训课程体系
+src/components/layout/LayoutHead.vue
+顶部头部组件。\n负责：
+平台标题
+全局搜索框
+用户头像
+用户名
+角色标记
+下拉菜单
+退出登录
+讲义单独有头部区域设计。
+修改 Vue前端实训课程体系
+src/components/layout/LayoutTabBar.vue
+模拟路由标签组件。\n负责：
+展示所有打开页签
+切换页签
+关闭页签
+关闭其他
+刷新当前页签
+同步激活菜单
+src/components/layout/PageFrame.vue
+统一页面框架。\n负责：
+标题栏
+工具栏
+内容栏
+插槽承载业务页面
+讲义里 PageFrame 是统一页面框架。
+修改 Vue前端实训课程体系
+7 通用组件
+src/components/common/StatusTag.vue
+封装各类状态标签：
+已投递
+筛选中
+面试中
+已录用
+已淘汰
+招聘中
+已关闭
+src/components/common/EmptyState.vue
+空状态组件：
+无岗位
+无收藏
+无投递
+无候选人
+src/components/common/SearchBar.vue
+可复用搜索输入组件。
+src/components/common/StatCard.vue
+首页统计卡片。
+src/components/common/ConfirmDialog.vue
+统一删除确认、撤回确认。
+src/components/common/TableAutoWidth.js
+这个是工具文件。\n职责：
+计算字符串宽度
+生成表格列宽
+支持最小宽度和最大宽度
+讲义里专门有表格列宽自适应。
+修改 Vue前端实训课程体系
+src/components/common/PaginationBar.vue
+统一分页组件。\n职责：
+当前页
+每页数量
+总数
+改页码
+改页大小
+8 PDF 与分栏组件
+src/components/pdf/CanvasPdf.vue
+必须做成可复用组件。\n职责：
+接收 PDF 地址或二进制数据
+加载 PDF 文档
+渲染当前页
+上一页
+下一页
+页码跳转
+缩放
+对外暴露页码和缩放的双向绑定
+显示加载状态
+讲义里明确要求 CanvasPdf.vue、Props、v-model、pdfjs-dist、渲染页面对象与页面缩放。
+修改 Vue前端实训课程体系
+src/components/split/ColumnFrame.vue
+必须做成通用左右分栏组件。\n职责：
+左右两栏具名插槽
+初始宽度
+最小宽度
+最大宽度
+鼠标按下开始拖拽
+鼠标移动改变宽度
+鼠标抬起结束拖拽
+记住上次宽度
+讲义里单独有 ColumnFrame 与拖拽流程。
+修改 Vue前端实训课程体系
+9 简历模块组件
+src/components/resume/ResumeEditor.vue
+简历左侧总编辑器。\n负责：
+组合各个表单子组件
+接收草稿对象
+修改内容时触发更新事件
+支持模板切换
+支持保存按钮
+src/components/resume/ResumePreview.vue
+右侧实时预览。\n负责：
+根据模板渲染简历
+展示基础信息、教育、经历、项目、技能
+支持缩放预览
+支持导出入口按钮
+src/components/resume/ResumeBasicForm.vue
+基础信息表单：
+姓名
+手机
+邮箱
+学校
+专业
+求职意向
+src/components/resume/ResumeEducationForm.vue
+教育经历表单。
+src/components/resume/ResumeExperienceForm.vue
+实习经历表单。
+src/components/resume/ResumeProjectForm.vue
+项目经历表单。
+src/components/resume/ResumeSkillForm.vue
+技能表单。
+src/components/resume/ResumeTemplateSelector.vue
+模板选择器。\n职责：
+经典模板
+极简模板
+校园模板
+src/components/resume/ResumeUploadPanel.vue
+上传简历 PDF 面板。\n职责：
+上传文件
+校验文件类型
+展示当前文件名
+触发预览
+10 岗位模块组件
+src/components/job/JobFilterBar.vue
+岗位筛选栏。\n职责：
+关键词
+城市
+类别
+薪资
+远程或线下
+排序方式
+触发查询事件
+src/components/job/JobCardList.vue
+岗位卡片列表容器。
+src/components/job/JobCard.vue
+岗位卡片。\n展示：
+岗位名
+公司
+地点
+薪资
+标签
+发布时间
+收藏按钮
+投递按钮
+src/components/job/JobDetailPanel.vue
+岗位详情主体。\n展示：
+岗位职责
+任职要求
+技能标签
+公司简介
+投递按钮
+选择简历
+src/components/job/FavoriteButton.vue
+收藏按钮，支持已收藏与未收藏状态切换。
+11 投递模块组件
+src/components/application/ApplicationFilterBar.vue
+投递筛选栏。\n职责：
+全部
+已投递
+筛选中
+面试中
+已录用
+已淘汰
+src/components/application/ApplicationTable.vue
+投递记录表格。\n字段：
+岗位
+公司
+时间
+状态
+使用简历
+备注
+操作
+12 HR 模块组件
+src/components/hr/HrJobToolbar.vue
+岗位管理工具栏：
+搜索
+状态筛选
+城市筛选
+新建岗位按钮
+src/components/hr/HrJobTable.vue
+岗位管理表格。\n功能：
+分页
+编辑
+删除
+上下线
+查看投递人数
+src/components/hr/CandidateFilterBar.vue
+候选人筛选栏。\n字段：
+岗位
+学校
+专业
+阶段
+匹配度区间
+src/components/hr/CandidateTable.vue
+候选人表格。\n字段：
+姓名
+学校
+专业
+岗位
+匹配度
+状态
+操作
+src/components/hr/ResumeReviewPanel.vue
+候选人左侧信息面板。\n展示：
+个人信息
+关键词命中
+匹配分
+面试备注
+阶段按钮
+src/components/hr/StageActionBar.vue
+阶段流转操作条。\n动作：
+进入筛选
+进入面试
+发 Offer
+淘汰
+备注保存
+src/components/hr/StatsPanels.vue
+统计区块组件。\n展示：
+招聘中岗位
+今日新增投递
+待筛选数量
+面试中数量
+漏斗统计
+13 常量文件
+src/constants/menu.js
+写完整菜单数组。\n分成：
+求职者菜单
+HR 菜单
+src/constants/routes.js
+写路由名常量。
+src/constants/role.js
+写角色常量：
+APPLICANT
+HR
+src/constants/status.js
+写状态映射：
+岗位状态
+投递状态
+候选人阶段状态
+src/constants/resume-template.js
+写模板列表。
+14 工具文件
+src/utils/auth.js
+处理 token 获取、设置、删除。
+src/utils/storage.js
+本地存储工具。\n用于：
+token
+用户信息
+Tabs
+简历草稿
+src/utils/file.js
+文件大小、文件类型校验。
+src/utils/pdf.js
+处理 PDF 地址、二进制转换。
+src/utils/score.js
+匹配度计算逻辑。\n规则建议：
+专业匹配
+技能匹配
+学校层级
+项目经历
+实习经历
+src/utils/format.js
+日期、薪资、状态文本格式化。
+src/utils/validate.js
+表单校验规则。
+src/utils/menu.js
+根据角色生成菜单和首页路由。
+15 页面文件
+src/views/login/LoginView.vue
+职责：
+登录表单
+账号密码校验
+登录请求
+成功写入 Vuex
+跳首页
+src/views/login/RegisterView.vue
+职责：
+注册表单
+用户名校验
+密码确认
+手机邮箱校验
+注册成功跳登录
+src/views/dashboard/ApplicantDashboard.vue
+求职者首页。\n内容：
+已投递数量
+面试中数量
+收藏数量
+简历完整度
+推荐岗位
+最近投递
+src/views/dashboard/HrDashboard.vue
+HR 首页。\n内容：
+招聘岗位数
+新增投递
+待筛选数量
+阶段漏斗
+最近投递
+src/views/job/JobCenterView.vue
+岗位中心页。\n职责：
+使用 PageFrame.vue
+顶部筛选栏
+岗位卡片
+分页
+条件查询
+计算筛选结果数
+src/views/job/JobDetailView.vue
+岗位详情页。\n职责：
+读取路由参数
+获取岗位详情
+选择简历
+立即投递
+收藏岗位
+src/views/resume/ResumeCenterView.vue
+这是前端亮点页。\n职责：
+使用 ColumnFrame.vue
+左边 ResumeEditor.vue
+右边 ResumePreview.vue 或 CanvasPdf.vue
+watch 深度监听表单草稿
+自动保存草稿
+计算简历完整度
+这对应讲义里的 watch、Props、v-model、PDF 组件、分栏拖拽。
+修改 Vue前端实训课程体系
+修改 Vue前端实训课程体系
+src/views/application/MyApplicationsView.vue
+我的投递页。\n职责：
+状态筛选
+表格展示
+分页
+查看详情
+撤回投递
+src/views/application/MyFavoritesView.vue
+我的收藏页。\n职责：
+收藏岗位列表
+取消收藏
+去详情
+一键投递
+src/views/guide/GuideCenterView.vue
+求职指南页。\n职责：
+左边 PDF 菜单
+右边 CanvasPdf.vue
+切换文档
+翻页和缩放
+src/views/hr/HrJobManageView.vue
+HR 岗位管理页。\n职责：
+PageFrame.vue
+HrJobToolbar.vue
+HrJobTable.vue
+新增和编辑弹窗
+删除确认
+表格分页
+列宽自适应
+src/views/hr/HrCandidateManageView.vue
+候选人管理页。\n职责：
+候选人筛选
+候选人表格
+匹配度排序
+阶段流转入口
+src/views/hr/HrApplicationManageView.vue
+HR 投递记录页。\n职责：
+按岗位查看投递
+按状态筛选
+查看候选人详情
+批量处理
+src/views/hr/HrResumeReviewView.vue
+另一个亮点页。\n职责：
+使用 ColumnFrame.vue
+左边 ResumeReviewPanel.vue
+右边 CanvasPdf.vue
+备注自动保存
+上一个下一个候选人
+改阶段
+多标签页审阅
+src/views/hr/HrStatisticsView.vue
+HR 统计页。\n职责：
+概览卡片
+漏斗
+各岗位投递量
+各阶段数量
+五 后端目录结构
+backend\n├─ src\n│  ├─ main\n│  │  ├─ java\n│  │  │  └─ com\n│  │  │     └─ offerflow\n│  │  │        ├─ OfferFlowApplication.java\n│  │  │        ├─ common\n│  │  │        │  ├─ ApiResult.java\n│  │  │        │  ├─ PageResult.java\n│  │  │        │  ├─ ResultCode.java\n│  │  │        │  ├─ BusinessException.java\n│  │  │        │  └─ GlobalExceptionHandler.java\n│  │  │        ├─ config\n│  │  │        │  ├─ CorsConfig.java\n│  │  │        │  ├─ WebMvcConfig.java\n│  │  │        │  └─ JacksonConfig.java\n│  │  │        ├─ controller\n│  │  │        │  ├─ AuthController.java\n│  │  │        │  ├─ JobController.java\n│  │  │        │  ├─ ResumeController.java\n│  │  │        │  ├─ ApplicationController.java\n│  │  │        │  ├─ FavoriteController.java\n│  │  │        │  ├─ GuideController.java\n│  │  │        │  └─ hr\n│  │  │        │     ├─ HrJobController.java\n│  │  │        │     ├─ HrCandidateController.java\n│  │  │        │     ├─ HrApplicationController.java\n│  │  │        │     └─ HrStatisticsController.java\n│  │  │        ├─ dto\n│  │  │        │  ├─ LoginDTO.java\n│  │  │        │  ├─ RegisterDTO.java\n│  │  │        │  ├─ JobQueryDTO.java\n│  │  │        │  ├─ JobSaveDTO.java\n│  │  │        │  ├─ ResumeSaveDTO.java\n│  │  │        │  ├─ ApplicationCreateDTO.java\n│  │  │        │  ├─ ApplicationQueryDTO.java\n│  │  │        │  ├─ CandidateQueryDTO.java\n│  │  │        │  ├─ CandidateStageUpdateDTO.java\n│  │  │        │  └─ HrNoteSaveDTO.java\n│  │  │        ├─ entity\n│  │  │        │  ├─ User.java\n│  │  │        │  ├─ Job.java\n│  │  │        │  ├─ Resume.java\n│  │  │        │  ├─ Application.java\n│  │  │        │  ├─ Favorite.java\n│  │  │        │  ├─ GuideDoc.java\n│  │  │        │  └─ Interview.java\n│  │  │        ├─ mapper\n│  │  │        │  ├─ UserMapper.java\n│  │  │        │  ├─ JobMapper.java\n│  │  │        │  ├─ ResumeMapper.java\n│  │  │        │  ├─ ApplicationMapper.java\n│  │  │        │  ├─ FavoriteMapper.java\n│  │  │        │  ├─ GuideDocMapper.java\n│  │  │        │  └─ InterviewMapper.java\n│  │  │        ├─ service\n│  │  │        │  ├─ AuthService.java\n│  │  │        │  ├─ JobService.java\n│  │  │        │  ├─ ResumeService.java\n│  │  │        │  ├─ ApplicationService.java\n│  │  │        │  ├─ FavoriteService.java\n│  │  │        │  ├─ GuideService.java\n│  │  │        │  ├─ CandidateService.java\n│  │  │        │  ├─ StatisticsService.java\n│  │  │        │  └─ InterviewService.java\n│  │  │        ├─ service\n│  │  │        │  └─ impl\n│  │  │        │     ├─ AuthServiceImpl.java\n│  │  │        │     ├─ JobServiceImpl.java\n│  │  │        │     ├─ ResumeServiceImpl.java\n│  │  │        │     ├─ ApplicationServiceImpl.java\n│  │  │        │     ├─ FavoriteServiceImpl.java\n│  │  │        │     ├─ GuideServiceImpl.java\n│  │  │        │     ├─ CandidateServiceImpl.java\n│  │  │        │     ├─ StatisticsServiceImpl.java\n│  │  │        │     └─ InterviewServiceImpl.java\n│  │  │        ├─ utils\n│  │  │        │  ├─ JwtTokenUtil.java\n│  │  │        │  ├─ PasswordUtil.java\n│  │  │        │  ├─ DateTimeUtil.java\n│  │  │        │  └─ MatchScoreUtil.java\n│  │  │        └─ vo\n│  │  │           ├─ LoginVO.java\n│  │  │           ├─ UserProfileVO.java\n│  │  │           ├─ JobListItemVO.java\n│  │  │           ├─ JobDetailVO.java\n│  │  │           ├─ ResumeVO.java\n│  │  │           ├─ ApplicationListItemVO.java\n│  │  │           ├─ CandidateListItemVO.java\n│  │  │           ├─ CandidateDetailVO.java\n│  │  │           ├─ GuideDocVO.java\n│  │  │           ├─ DashboardApplicantVO.java\n│  │  │           ├─ DashboardHrVO.java\n│  │  │           └─ StatisticsOverviewVO.java\n│  │  └─ resources\n│  │     ├─ mapper\n│  │     │  ├─ UserMapper.xml\n│  │     │  ├─ JobMapper.xml\n│  │     │  ├─ ResumeMapper.xml\n│  │     │  ├─ ApplicationMapper.xml\n│  │     │  ├─ FavoriteMapper.xml\n│  │     │  ├─ GuideDocMapper.xml\n│  │     │  └─ InterviewMapper.xml\n│  │     ├─ sql\n│  │     │  ├─ schema.sql\n│  │     │  └─ data.sql\n│  │     ├─ application.yml\n│  │     └─ application-dev.yml\n└─ pom.xml
+六 后端每个文件该写什么
+1 启动文件
+OfferFlowApplication.java
+Spring Boot 启动类。\n职责：
+启动应用
+扫描组件
+启用 MyBatis Mapper 扫描
+2 通用返回与异常
+common/ApiResult.java
+统一返回结构：
+code
+msg
+data
+讲义里明确要求封装一个通用返回类。
+修改 Vue前端实训课程体系
+common/PageResult.java
+分页返回结构：
+list
+total
+pageNum
+pageSize
+common/ResultCode.java
+状态码枚举：
+成功
+参数错误
+未登录
+无权限
+业务异常
+系统异常
+common/BusinessException.java
+业务异常类。
+common/GlobalExceptionHandler.java
+全局异常处理。\n职责：
+参数异常
+业务异常
+系统异常
+返回统一结构
+3 配置文件
+config/CorsConfig.java
+允许前端开发环境跨域。
+config/WebMvcConfig.java
+静态资源和 PDF 目录映射。
+config/JacksonConfig.java
+日期格式与空值处理。
+resources/application.yml
+主配置。\n写：
+服务端口
+激活环境
+MyBatis 路径
+日志级别
+resources/application-dev.yml
+开发环境配置。\n写：
+MySQL 地址
+用户名
+密码
+驱动
+文件上传路径
+4 DTO
+dto/LoginDTO.java
+字段：
+username
+password
+role
+dto/RegisterDTO.java
+字段：
+username
+password
+confirmPassword
+email
+phone
+role
+dto/JobQueryDTO.java
+字段：
+keyword
+city
+category
+type
+salaryMin
+salaryMax
+status
+pageNum
+pageSize
+dto/JobSaveDTO.java
+字段：
+id
+title
+company
+city
+category
+type
+salaryMin
+salaryMax
+tags
+description
+requirement
+status
+dto/ResumeSaveDTO.java
+字段：
+id
+title
+basicInfoJson
+educationJson
+experienceJson
+projectJson
+skillsJson
+templateCode
+dto/ApplicationCreateDTO.java
+字段：
+jobId
+resumeId
+dto/ApplicationQueryDTO.java
+字段：
+status
+pageNum
+pageSize
+dto/CandidateQueryDTO.java
+字段：
+keyword
+jobId
+school
+major
+stage
+scoreMin
+scoreMax
+pageNum
+pageSize
+dto/CandidateStageUpdateDTO.java
+字段：
+applicationId
+stage
+dto/HrNoteSaveDTO.java
+字段：
+applicationId
+hrNote
+5 Entity
+entity/User.java
+对应用户表。
+entity/Job.java
+对应岗位表。
+entity/Resume.java
+对应简历表。\n其中复杂结构可以存 JSON 字符串。
+entity/Application.java
+对应投递表。
+entity/Favorite.java
+对应收藏表。
+entity/GuideDoc.java
+对应 PDF 指南表。
+entity/Interview.java
+对应面试表。
+6 VO
+vo/LoginVO.java
+登录返回：
+token
+userId
+username
+role
+avatar
+vo/UserProfileVO.java
+当前用户信息。
+vo/JobListItemVO.java
+岗位列表项。
+vo/JobDetailVO.java
+岗位详情。
+vo/ResumeVO.java
+简历详情。
+vo/ApplicationListItemVO.java
+投递记录列表项。
+vo/CandidateListItemVO.java
+候选人列表项。
+vo/CandidateDetailVO.java
+候选人详情与简历关键信息。
+vo/GuideDocVO.java
+PDF 指南列表项。
+vo/DashboardApplicantVO.java
+求职者首页数据。
+vo/DashboardHrVO.java
+HR 首页数据。
+vo/StatisticsOverviewVO.java
+HR 统计页汇总数据。
+7 Mapper 接口
+mapper/UserMapper.java
+写：
+根据用户名和角色查询用户
+新增用户
+根据 id 查用户
+mapper/JobMapper.java
+写：
+岗位分页查询
+岗位详情
+新增岗位
+编辑岗位
+删除岗位
+更新岗位状态
+岗位数统计
+mapper/ResumeMapper.java
+写：
+根据用户查简历
+保存简历
+更新简历
+查询简历 PDF 路径
+mapper/ApplicationMapper.java
+写：
+新增投递
+判断是否已投递
+我的投递分页
+HR 投递分页
+更新投递阶段
+更新 HR 备注
+投递数统计
+mapper/FavoriteMapper.java
+写：
+收藏
+取消收藏
+查询收藏列表
+判断是否已收藏
+mapper/GuideDocMapper.java
+写：
+查询 PDF 指南列表
+根据编码查文档
+mapper/InterviewMapper.java
+写：
+新增面试记录
+查询面试记录
+8 Mapper XML
+resources/mapper/UserMapper.xml
+写基础增查。
+resources/mapper/JobMapper.xml
+这是最关键的 XML。\n必须写：
+resultMap
+岗位分页动态 SQL
+关键词条件
+城市条件
+类别条件
+状态条件
+薪资条件
+排序
+新增
+更新
+删除
+讲义里明确要求 MyBatis、Mapper XML、if、foreach、动态 SQL。
+修改 Vue前端实训课程体系
+resources/mapper/ResumeMapper.xml
+写：
+根据用户查简历
+保存简历
+更新简历
+更新 PDF 路径
+resources/mapper/ApplicationMapper.xml
+写：
+新增投递
+我的投递分页
+HR 投递分页
+候选人分页
+修改阶段
+修改备注
+漏斗统计
+resources/mapper/FavoriteMapper.xml
+写收藏增删查。
+resources/mapper/GuideDocMapper.xml
+写 PDF 指南查询。
+resources/mapper/InterviewMapper.xml
+写面试记录增查。
+9 Service 接口与实现
+service/AuthService.java
+职责：
+登录
+注册
+获取当前用户
+service/impl/AuthServiceImpl.java
+实现：
+校验用户
+密码比对
+生成 token
+返回登录结果
+service/JobService.java
+职责：
+岗位分页
+岗位详情
+新增岗位
+编辑岗位
+删除岗位
+更新岗位状态
+service/ResumeService.java
+职责：
+获取我的简历
+保存草稿
+上传 PDF
+获取 PDF 路径
+service/ApplicationService.java
+职责：
+投递岗位
+获取我的投递
+获取 HR 投递
+更新阶段
+保存备注
+service/FavoriteService.java
+职责：
+收藏
+取消收藏
+收藏列表
+service/GuideService.java
+职责：
+PDF 指南目录
+当前文档详情
+service/CandidateService.java
+职责：
+候选人分页
+候选人详情
+匹配度计算
+service/StatisticsService.java
+职责：
+求职者首页统计
+HR 首页统计
+招聘统计页数据
+service/InterviewService.java
+职责：
+面试记录增查
+10 Controller
+controller/AuthController.java
+接口：
+POST /api/auth/login
+POST /api/auth/register
+GET /api/auth/profile
+controller/JobController.java
+接口：
+GET /api/jobs
+GET /api/jobs/{id}
+controller/ResumeController.java
+接口：
+GET /api/resumes/me
+POST /api/resumes/save
+POST /api/resumes/upload
+GET /api/resumes/{id}/pdf
+controller/ApplicationController.java
+接口：
+POST /api/applications
+GET /api/applications/me
+controller/FavoriteController.java
+接口：
+POST /api/favorites
+DELETE /api/favorites/{jobId}
+GET /api/favorites/me
+controller/GuideController.java
+接口：
+GET /api/guides
+GET /api/guides/{code}
+controller/hr/HrJobController.java
+接口：
+GET /api/hr/jobs
+POST /api/hr/jobs
+PUT /api/hr/jobs
+DELETE /api/hr/jobs/{id}
+PUT /api/hr/jobs/{id}/status
+controller/hr/HrCandidateController.java
+接口：
+GET /api/hr/candidates
+GET /api/hr/candidates/{applicationId}
+PUT /api/hr/candidates/stage
+PUT /api/hr/candidates/note
+controller/hr/HrApplicationController.java
+接口：
+GET /api/hr/applications
+controller/hr/HrStatisticsController.java
+接口：
+GET /api/hr/statistics/overview
+GET /api/hr/statistics/funnel
+讲义里要求 Controller 接收 GET 与 POST，返回统一对象。
+修改 Vue前端实训课程体系
+11 工具类
+utils/JwtTokenUtil.java
+生成和解析 token。
+utils/PasswordUtil.java
+密码加密。
+utils/DateTimeUtil.java
+日期格式化。
+utils/MatchScoreUtil.java
+匹配度算法。\n建议规则：
+岗位技能命中
+专业匹配
+项目经历关键词命中
+实习经历关键词命中
+12 SQL 文件
+resources/sql/schema.sql
+写完整建表 SQL。
+必须有这些表：
+sys_user
+job
+resume
+application_record
+favorite_job
+guide_doc
+interview_record
+resources/sql/data.sql
+写初始化数据：
+一个求职者账号
+一个 HR 账号
+10 条岗位
+3 个 PDF 指南
+1 份初始简历
+3 条投递记录
+七 数据库表设计
+下面这个就是后端要落实的表结构。
+sys_user
+字段：
+id
+username
+password
+role
+email
+phone
+avatar
+status
+create_time
+update_time
+job
+字段：
+id
+title
+company
+city
+category
+type
+salary_min
+salary_max
+tags
+description
+requirement
+status
+publish_time
+create_time
+update_time
+resume
+字段：
+id
+user_id
+title
+basic_info_json
+education_json
+experience_json
+project_json
+skills_json
+template_code
+pdf_url
+complete_score
+create_time
+update_time
+application_record
+字段：
+id
+user_id
+job_id
+resume_id
+stage
+hr_note
+match_score
+apply_time
+update_time
+favorite_job
+字段：
+id
+user_id
+job_id
+create_time
+guide_doc
+字段：
+id
+code
+title
+file_url
+sort_num
+create_time
+interview_record
+字段：
+id
+application_id
+round_num
+interview_time
+interviewer
+status
+create_time
+八 前端页面和后端接口一一对应
+登录页
+前端 LoginView.vue
+后端 POST /api/auth/login
+注册页
+前端 RegisterView.vue
+后端 POST /api/auth/register
+岗位中心
+前端 JobCenterView.vue
+后端 GET /api/jobs
+岗位详情
+前端 JobDetailView.vue
+后端 GET /api/jobs/{id}
+我的简历
+前端 ResumeCenterView.vue
+后端 GET /api/resumes/me
+后端 POST /api/resumes/save
+后端 POST /api/resumes/upload
+我的投递
+前端 MyApplicationsView.vue
+后端 GET /api/applications/me
+我的收藏
+前端 MyFavoritesView.vue
+后端 GET /api/favorites/me
+求职指南
+前端 GuideCenterView.vue
+后端 GET /api/guides
+HR 岗位管理
+前端 HrJobManageView.vue
+后端 GET /api/hr/jobs
+后端 POST /api/hr/jobs
+后端 PUT /api/hr/jobs
+后端 DELETE /api/hr/jobs/{id}
+HR 候选人管理
+前端 HrCandidateManageView.vue
+后端 GET /api/hr/candidates
+HR 简历筛选
+前端 HrResumeReviewView.vue
+后端 GET /api/hr/candidates/{applicationId}
+后端 PUT /api/hr/candidates/stage
+后端 PUT /api/hr/candidates/note
+HR 统计
+前端 HrStatisticsView.vue
+后端 GET /api/hr/statistics/overview
+九 Codex 的实际生成顺序
+把这个顺序也一起给它。
+第一步 先创建根目录 offerflow\n第二步 创建 frontend 和 backend 两个项目\n第三步 先生成前端 package.json vite.config.js main.js App.vue\n第四步 生成 router store api utils constants\n第五步 生成 layout 相关组件\n第六步 生成求职者端页面和组件\n第七步 生成 HR 端页面和组件\n第八步 生成 CanvasPdf 和 ColumnFrame\n第九步 生成后端 pom.xml application 配置 OfferFlowApplication\n第十步 生成 common config entity dto vo mapper service controller\n第十一步 生成 mapper xml 和 sql 文件\n第十二步 生成初始化数据\n第十三步 联调前后端接口\n第十四步 修复页面跳转 状态缓存 表格分页 PDF 预览
+十 你们交给 Codex 时最关键的补充要求
+把这段也一起给它。
+额外要求\n\n一 前端所有页面都要可直接访问和演示\n二 所有假数据都不要写死在页面里 必须走后端接口\n三 后端返回结构统一\n四 所有列表都要分页\n五 HR 岗位管理和候选人管理都要支持条件查询\n六 ResumeCenterView 必须用左右分栏拖拽\n七 HrResumeReviewView 必须用左右分栏拖拽\n八 GuideCenterView 必须能在线阅读 PDF\n九 LayoutTabBar 必须能新增 切换 关闭标签\n十 KeepAlive 必须对详情页和审阅页生效\n十一 路由守卫必须检查 token 和 role\n十二 Vuex 必须管理 token 用户信息 tabs keeps 简历草稿\n十三 代码不要省略 不要只生成空壳文件\n十四 先保证运行 再做样式优化
+十一 你们现在最适合直接让 Codex 先做的交付目标
+先让它一次性生成这个版本：
+前端
+登录页
+注册页
+HomeFrame
+LayoutMenu
+LayoutHead
+LayoutTabBar
+ApplicantDashboard
+JobCenterView
+JobDetailView
+ResumeCenterView
+MyApplicationsView
+GuideCenterView
+HrDashboard
+HrJobManageView
+HrCandidateManageView
+HrResumeReviewView
+HrStatisticsView
+CanvasPdf
+ColumnFrame
+后端
+登录注册
+岗位分页和详情
+简历保存和 PDF 地址
+投递分页
+HR 岗位管理
+候选人分页和状态修改
+统计概览
+MySQL 建表和初始化数据

@@ -1,0 +1,18 @@
+.el-card,
+.el-dialog,
+.el-table,
+.el-input__wrapper,
+.el-select__wrapper,
+.el-button,
+.el-tag,
+.el-pagination button,
+.el-pagination .el-pager li {
+  border-radius: 16px;
+}
+.el-card {
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+.el-menu {
+  border-right: none;
+}
