@@ -11,7 +11,10 @@
 
     <div class="skill-section">
       <span>自定义补充技能</span>
-      <el-input v-model="customSkill" placeholder="输入后按回车新增技能" @keyup.enter="addSkill" />
+      <div class="custom-skill-row">
+        <el-input v-model="customSkill" placeholder="输入技能后按 Enter 或点击新增" @keyup.enter="addSkill" />
+        <el-button type="primary" plain @click="addSkill">新增</el-button>
+      </div>
       <div class="tag-list">
         <el-tag v-for="item in model.customSkills" :key="item" closable @close="removeSkill(item)">
           {{ item }}
@@ -23,6 +26,7 @@
 
 <script setup>
 import { computed, ref, watchEffect } from 'vue'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   model: { type: Object, required: true },
@@ -41,10 +45,16 @@ const safeCandidates = computed(() => (props.candidates?.length ? props.candidat
 
 const addSkill = () => {
   const value = customSkill.value.trim()
-  if (!value) return
-  if (!props.model.customSkills.includes(value)) {
-    props.model.customSkills.push(value)
+  if (!value) {
+    ElMessage.warning('技能名称不能为空')
+    return
   }
+  const allSkills = [...props.model.jobSkills, ...props.model.customSkills]
+  if (allSkills.includes(value)) {
+    ElMessage.warning('技能不能重复添加')
+    return
+  }
+  props.model.customSkills.push(value)
   customSkill.value = ''
 }
 
@@ -61,6 +71,12 @@ const removeSkill = (value) => {
 .skill-section {
   display: grid;
   gap: 14px;
+}
+
+.custom-skill-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
 }
 
 .tag-list {

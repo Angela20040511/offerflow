@@ -1,9 +1,39 @@
+# frontend
+node_modules/
+dist/
+.vite/
+
+# backend
+target/
+*.class
+
+# env
+.env
+.env.*
+application-local.yml
+application-dev.yml
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# system
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+logs/
+
+.codex_tmp/
+*.log
+spring-run*.log
 node_modules/
 dist/
 target/
-.idea/
-.vscode/
-*.log
 .env
 .env.*
-!.env.example
+.idea/
+.vscode/
+*.iml

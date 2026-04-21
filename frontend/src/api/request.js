@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { getToken } from '@/utils/auth'
+import { clearToken, clearUserCache, getToken } from '@/utils/auth'
 
 const service = axios.create({
   baseURL: '/api',
@@ -28,6 +28,14 @@ service.interceptors.response.use(
     return payload
   },
   (error) => {
+    const status = error?.response?.status
+    if (status === 401 && getToken()) {
+      clearToken()
+      clearUserCache()
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.replace('/login')
+      }
+    }
     const message = error?.response?.data?.msg || error.message || '\u7f51\u7edc\u5f02\u5e38\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5'
     ElMessage.error(message)
     return Promise.reject(error)

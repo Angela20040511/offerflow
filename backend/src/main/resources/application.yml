@@ -16,7 +16,7 @@ spring:
       max-request-size: 10MB
   sql:
     init:
-      mode: always
+      mode: ${SQL_INIT_MODE:never}
       encoding: UTF-8
       continue-on-error: false
       schema-locations: classpath:sql/schema.sql

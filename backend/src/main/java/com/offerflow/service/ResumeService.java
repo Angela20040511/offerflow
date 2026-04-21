@@ -56,7 +56,14 @@ public class ResumeService {
         }
         Map<String, Object> basicInfo = normalizeBasicInfo(request.getBasicInfo());
         String resumeName = StringUtils.hasText(request.getResumeName()) ? request.getResumeName().trim() : defaultResumeName(request, basicInfo);
-        int score = ResumeScoreUtil.compute(basicInfo, request.getEducationList(), request.getExperienceList(), request.getProjectList(), request.getSkillList(), resume.getPdfUrl());
+        int score = ResumeScoreUtil.compute(
+                basicInfo,
+                request.getEducationList(),
+                request.getExperienceList(),
+                request.getProjectList(),
+                request.getSkillList(),
+                resume.getPdfUrl()
+        );
         resume.setTitle(StringUtils.hasText(request.getTitle()) ? request.getTitle().trim() : resumeName);
         resume.setResumeName(resumeName);
         resume.setResumeType(StringUtils.hasText(request.getResumeType()) ? request.getResumeType().trim() : "GENERAL");
@@ -116,6 +123,9 @@ public class ResumeService {
         if (resume.getIsDefault() != null && resume.getIsDefault() == 1) {
             throw new BusinessException(400, "默认简历不能删除");
         }
+        if (resumeMapper.countApplicationsByResumeId(resumeId) > 0) {
+            throw new BusinessException(400, "该简历已用于投递记录，不能删除。你可以新建或重命名其他版本。");
+        }
         return resumeMapper.deleteById(resumeId) > 0;
     }
 
@@ -124,6 +134,11 @@ public class ResumeService {
         validateEditable(resumeId);
         if (file == null || file.isEmpty()) {
             throw new BusinessException(400, "请上传 PDF 文件");
+        }
+        String originalFilename = file.getOriginalFilename() == null ? "" : file.getOriginalFilename().trim().toLowerCase();
+        String contentType = file.getContentType() == null ? "" : file.getContentType().trim().toLowerCase();
+        if (!originalFilename.endsWith(".pdf") && !contentType.contains("pdf")) {
+            throw new BusinessException(400, "仅支持上传 PDF 文件");
         }
         try {
             Path dir = Paths.get(resumeUploadDir);
@@ -166,10 +181,8 @@ public class ResumeService {
         basicInfo.put("name", "");
         basicInfo.put("phone", "");
         basicInfo.put("email", "");
-        basicInfo.put("school", "");
-        basicInfo.put("major", "");
-        basicInfo.put("careerDirection", "");
-        basicInfo.put("intention", "");
+        basicInfo.put("educationLevel", "");
+        basicInfo.put("gender", "");
         Resume created = Resume.builder()
                 .userId(userId)
                 .title("默认简历")
@@ -206,7 +219,7 @@ public class ResumeService {
             throw new BusinessException(404, "简历不存在");
         }
         Long currentUserId = SecurityUtils.currentUserId();
-        if (!resume.getUserId().equals(currentUserId) && !"HR".equals(SecurityUtils.currentUser().getRole())) {
+        if (!resume.getUserId().equals(currentUserId) && !SecurityUtils.isHrRole(SecurityUtils.currentUser().getRole())) {
             throw new BusinessException(403, "无权查看这份简历");
         }
         return resume;
@@ -247,9 +260,11 @@ public class ResumeService {
 
     private Map<String, Object> normalizeBasicInfo(Map<String, Object> basicInfo) {
         Map<String, Object> result = new LinkedHashMap<>(basicInfo == null ? Map.of() : basicInfo);
-        String careerDirection = String.valueOf(result.getOrDefault("careerDirection", result.getOrDefault("intention", "")));
-        result.put("careerDirection", careerDirection);
-        result.put("intention", careerDirection);
+        result.put("name", stringValue(result.get("name")));
+        result.put("phone", stringValue(result.get("phone")));
+        result.put("email", stringValue(result.get("email")));
+        result.put("educationLevel", stringValue(result.get("educationLevel")));
+        result.put("gender", stringValue(result.get("gender")));
         return result;
     }
 
@@ -257,9 +272,9 @@ public class ResumeService {
         if (StringUtils.hasText(request.getTitle())) {
             return request.getTitle().trim();
         }
-        Object careerDirection = basicInfo.get("careerDirection");
-        if (careerDirection != null && StringUtils.hasText(String.valueOf(careerDirection))) {
-            return careerDirection + "简历";
+        Object name = basicInfo.get("name");
+        if (name != null && StringUtils.hasText(String.valueOf(name))) {
+            return String.valueOf(name).trim() + "简历";
         }
         return "默认简历";
     }
@@ -269,5 +284,9 @@ public class ResumeService {
             return requestedName.trim();
         }
         return StringUtils.hasText(fallbackName) ? fallbackName + "-副本" : "新建简历";
+    }
+
+    private String stringValue(Object value) {
+        return value == null ? "" : String.valueOf(value).trim();
     }
 }

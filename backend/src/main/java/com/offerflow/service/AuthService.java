@@ -48,8 +48,15 @@ public class AuthService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long register(ApiModels.RegisterRequest request) {
+        String requestedRole = SecurityUtils.normalizeRole(request.getRole());
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new BusinessException(400, "两次输入的密码不一致");
+        }
+        if (SecurityUtils.isHrRole(requestedRole)) {
+            throw new BusinessException(403, "招聘人员账号暂不支持自助注册");
+        }
+        if (!SecurityUtils.isApplicantRole(requestedRole)) {
+            throw new BusinessException(400, "仅支持注册求职者账号");
         }
         if (userMapper.selectByUsername(request.getUsername()) != null) {
             throw new BusinessException(409, "用户名已存在");
@@ -57,39 +64,36 @@ public class AuthService {
         User user = User.builder()
                 .username(request.getUsername())
                 .password(request.getPassword())
-                .role(request.getRole())
+                .role("APPLICANT")
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .avatar("/static/avatar/default.png")
                 .status(1)
                 .build();
         userMapper.insertUser(user);
-        if ("APPLICANT".equals(request.getRole())) {
-            Map<String, Object> basicInfo = new LinkedHashMap<>();
-            basicInfo.put("name", request.getUsername());
-            basicInfo.put("phone", request.getPhone());
-            basicInfo.put("email", request.getEmail());
-            basicInfo.put("school", "");
-            basicInfo.put("major", "");
-            basicInfo.put("careerDirection", "");
-            basicInfo.put("intention", "");
-            Resume resume = Resume.builder()
-                    .userId(user.getId())
-                    .title("默认简历")
-                    .resumeName("默认简历")
-                    .resumeType("GENERAL")
-                    .basicInfoJson(JsonUtils.toJson(basicInfo))
-                    .educationJson(JsonUtils.toJson(List.of()))
-                    .experienceJson(JsonUtils.toJson(List.of()))
-                    .projectJson(JsonUtils.toJson(List.of()))
-                    .skillsJson(JsonUtils.toJson(List.of()))
-                    .templateCode("classic")
-                    .pdfUrl("/files/resume/default-resume.pdf")
-                    .completeScore(ResumeScoreUtil.compute(basicInfo, List.of(), List.of(), List.of(), List.of(), "/files/resume/default-resume.pdf"))
-                    .isDefault(1)
-                    .build();
-            resumeMapper.insertResume(resume);
-        }
+
+        Map<String, Object> basicInfo = new LinkedHashMap<>();
+        basicInfo.put("name", request.getUsername());
+        basicInfo.put("phone", request.getPhone());
+        basicInfo.put("email", request.getEmail());
+        basicInfo.put("educationLevel", "");
+        basicInfo.put("gender", "");
+        Resume resume = Resume.builder()
+                .userId(user.getId())
+                .title("默认简历")
+                .resumeName("默认简历")
+                .resumeType("GENERAL")
+                .basicInfoJson(JsonUtils.toJson(basicInfo))
+                .educationJson(JsonUtils.toJson(List.of()))
+                .experienceJson(JsonUtils.toJson(List.of()))
+                .projectJson(JsonUtils.toJson(List.of()))
+                .skillsJson(JsonUtils.toJson(List.of()))
+                .templateCode("classic")
+                .pdfUrl("/files/resume/default-resume.pdf")
+                .completeScore(ResumeScoreUtil.compute(basicInfo, List.of(), List.of(), List.of(), List.of(), "/files/resume/default-resume.pdf"))
+                .isDefault(1)
+                .build();
+        resumeMapper.insertResume(resume);
         return user.getId();
     }
 

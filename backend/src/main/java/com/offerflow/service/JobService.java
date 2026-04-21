@@ -115,7 +115,10 @@ public class JobService {
         for (Map<String, Object> item : jobMapper.selectJobPage(buildParams(query, true))) {
             Long jobId = asLong(item.get("id"));
             Application application = applicationMapper.selectByUserIdAndJobId(userId, jobId);
-            if (application == null) {
+            if (isActiveApplication(application)) {
+                continue;
+            }
+            if (application == null || "WITHDRAWN".equals(application.getStage())) {
                 result.add(normalizeJobRow(item));
             }
             if (result.size() >= limit) {
@@ -163,11 +166,15 @@ public class JobService {
         boolean isApplied = false;
         if (userId != null && jobId != null) {
             isFavorite = favoriteMapper.existsFavorite(userId, jobId) > 0;
-            isApplied = applicationMapper.selectByUserIdAndJobId(userId, jobId) != null;
+            isApplied = isActiveApplication(applicationMapper.selectByUserIdAndJobId(userId, jobId));
         }
         row.put("isFavorite", isFavorite);
         row.put("isApplied", isApplied);
         return row;
+    }
+
+    private boolean isActiveApplication(Application application) {
+        return application != null && !"WITHDRAWN".equals(application.getStage());
     }
 
     private Job toJob(Job existing, JobSaveDTO request) {
@@ -207,7 +214,7 @@ public class JobService {
                 .description(request.getDescription())
                 .requirement(request.getRequirement())
                 .status(request.getStatus())
-                .publishTime(existing == null ? ("OPEN".equals(request.getStatus()) ? LocalDateTime.now() : null) : existing.getPublishTime())
+                .publishTime(resolvePublishTime(existing, request.getStatus()))
                 .build();
     }
 
@@ -258,6 +265,16 @@ public class JobService {
             }
         }
         return "";
+    }
+
+    private LocalDateTime resolvePublishTime(Job existing, String status) {
+        if (existing == null) {
+            return "OPEN".equals(status) ? LocalDateTime.now() : null;
+        }
+        if (existing.getPublishTime() != null) {
+            return existing.getPublishTime();
+        }
+        return "OPEN".equals(status) ? LocalDateTime.now() : null;
     }
 
     private String normalizeType(String value) {

@@ -17,26 +17,29 @@ const splitPeriod = (period) => {
   }
 }
 
+export const educationLevelOptions = ['博士后', '博士', '硕士/研究生', '本科', '大专', '高中', '中专', '其他']
+export const genderOptions = ['男', '女', '不便透露', '其他']
+export const employmentTypeOptions = ['正式工作', '实习', '兼职', '见习/培训生', '创业']
+
 export const formatRange = (startDate, endDate) => [text(startDate), text(endDate)].filter(Boolean).join(' - ')
 
 export const normalizeBasicInfo = (basicInfo = {}) => ({
   name: text(basicInfo.name),
   phone: text(basicInfo.phone),
   email: text(basicInfo.email),
-  school: text(basicInfo.school),
-  major: text(basicInfo.major),
-  careerDirection: text(basicInfo.careerDirection || basicInfo.intention)
+  educationLevel: text(basicInfo.educationLevel),
+  gender: text(basicInfo.gender)
 })
 
 export const normalizeEducationItem = (item = {}) => {
   const periodRange = splitPeriod(item.period)
   return {
     school: text(item.school),
-    degree: text(item.degree),
+    educationStage: text(item.educationStage || item.educationLevel || item.degree),
     major: text(item.major),
     startDate: text(item.startDate || periodRange.startDate),
     endDate: text(item.endDate || periodRange.endDate),
-    highlight: text(item.highlight)
+    courses: text(item.courses || item.highlight)
   }
 }
 
@@ -45,9 +48,9 @@ export const normalizeExperienceItem = (item = {}) => {
   return {
     company: text(item.company),
     position: text(item.position || item.title),
+    employmentType: text(item.employmentType || item.workType),
     startDate: text(item.startDate || periodRange.startDate),
     endDate: text(item.endDate || periodRange.endDate),
-    location: text(item.location),
     content: text(item.content || item.description)
   }
 }
@@ -115,24 +118,26 @@ export const toResumeSavePayload = (resume = {}) => {
     targetCategoryId: normalized.targetCategoryId,
     templateCode: normalized.templateCode,
     basicInfo: {
-      ...normalized.basicInfo,
-      careerDirection: normalized.basicInfo.careerDirection,
-      intention: normalized.basicInfo.careerDirection
+      name: normalized.basicInfo.name,
+      phone: normalized.basicInfo.phone,
+      email: normalized.basicInfo.email,
+      educationLevel: normalized.basicInfo.educationLevel,
+      gender: normalized.basicInfo.gender
     },
     educationList: normalized.educationList.map((item) => ({
       school: item.school,
-      degree: item.degree,
+      educationStage: item.educationStage,
       major: item.major,
       startDate: item.startDate,
       endDate: item.endDate,
-      highlight: item.highlight
+      courses: item.courses
     })),
     experienceList: normalized.experienceList.map((item) => ({
       company: item.company,
       position: item.position,
+      employmentType: item.employmentType,
       startDate: item.startDate,
       endDate: item.endDate,
-      location: item.location,
       content: item.content
     })),
     projectList: normalized.projectList.map((item) => ({
@@ -149,7 +154,7 @@ export const toResumeSavePayload = (resume = {}) => {
 
 export const getPdfFileName = (resume = {}) => {
   if (text(resume.pdfUrl)) {
-    const parts = resume.pdfUrl.split('/')
+    const parts = resume.pdfUrl.split('?')[0].split('/')
     return parts[parts.length - 1]
   }
   return `${text(resume.resumeName || '通用简历')}.pdf`

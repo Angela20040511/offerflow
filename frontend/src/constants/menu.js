@@ -29,6 +29,8 @@ export const routeTitleMap = {
   '/applicant/jobs': '\u5c97\u4f4d\u4e2d\u5fc3',
   '/applicant/job': '\u5c97\u4f4d\u8be6\u60c5',
   '/applicant/resume': '\u7b80\u5386\u4e2d\u5fc3',
+  '/applicant/resume/editor': '\u7b80\u5386\u4e2d\u5fc3-\u7f16\u8f91',
+  '/applicant/resume/pdf': '\u7b80\u5386\u4e2d\u5fc3-PDF',
   '/applicant/applications': '\u6211\u7684\u6295\u9012',
   '/applicant/favorites': '\u6211\u7684\u6536\u85cf',
   '/applicant/guide': '\u5e94\u8058\u6307\u5357',

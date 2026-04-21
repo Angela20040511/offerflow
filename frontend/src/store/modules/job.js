@@ -12,7 +12,7 @@ const defaultFilters = () => ({
   durationType: '',
   workMode: '',
   pageNum: 1,
-  pageSize: 10
+  pageSize: 6
 })
 
 const parseSalaryRange = (salaryRange) => {

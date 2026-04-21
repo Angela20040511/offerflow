@@ -7,7 +7,8 @@
       </div>
       <div class="hero-side">
         <StatusTag mode="job" :status="job.status" />
-        <el-tag v-if="job.isApplied" type="success" effect="light">已投递</el-tag>
+        <StatusTag v-if="job.isApplied" :status="'APPLIED'" />
+        <StatusTag v-if="job.isFavorite" :status="'FAVORITE'" label="已收藏" />
       </div>
     </div>
 
@@ -41,24 +42,25 @@
     </div>
 
     <div class="section">
-      <h3>推荐技能</h3>
-      <div v-if="skillList.length" class="skill-list">
-        <el-tag v-for="item in skillList" :key="item" effect="plain">{{ item }}</el-tag>
+      <h3>岗位标签</h3>
+      <div v-if="tagSummary.visible.length" class="skill-list">
+        <el-tag v-for="item in tagSummary.visible" :key="item" effect="plain">{{ item }}</el-tag>
+        <el-tag v-if="tagSummary.extra" effect="plain">+{{ tagSummary.extra }}</el-tag>
       </div>
-      <el-empty v-else description="暂无技能要求" :image-size="72" />
+      <el-empty v-else description="暂无岗位标签" :image-size="72" />
     </div>
 
     <div class="section action-panel">
-      <h3>选择投递简历版本</h3>
-      <el-select v-model="selectedResumeId" placeholder="请选择简历版本" :disabled="!hasResumes">
+      <h3>{{ job.isApplied ? '当前岗位状态' : '选择投递简历版本' }}</h3>
+      <el-select v-model="selectedResumeId" placeholder="请选择简历版本" :disabled="!hasResumes || !canChooseResume">
         <el-option v-for="item in resumes" :key="item.id" :label="item.resumeName" :value="item.id" />
       </el-select>
       <div class="resume-tip">
-        {{ hasResumes ? '投递时将使用当前选中的简历版本。' : '请先在简历中心创建简历版本' }}
+        {{ actionHint }}
       </div>
       <div class="action-row">
         <el-button type="primary" :disabled="!canApply" @click="$emit('apply', { job, resumeId: selectedResumeId })">
-          {{ job.isApplied ? '已投递' : '立即投递' }}
+          {{ applyLabel }}
         </el-button>
         <el-button :type="job.isFavorite ? 'warning' : 'default'" @click="$emit('favorite', job)">
           {{ job.isFavorite ? '取消收藏' : '收藏岗位' }}
@@ -71,6 +73,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import StatusTag from '@/components/common/StatusTag.vue'
+import { formatShortLocation, getTagSummary } from '@/utils/job'
 
 const props = defineProps({
   job: { type: Object, default: null },
@@ -103,25 +106,25 @@ const durationMap = {
   FULL_TIME: '校招全职'
 }
 
-const parseSkills = (value) => {
-  if (Array.isArray(value)) return value
-  if (typeof value === 'string' && value.trim()) {
-    try {
-      const parsed = JSON.parse(value)
-      return Array.isArray(parsed) ? parsed : []
-    } catch {
-      return []
-    }
-  }
-  return []
-}
-
 const hasResumes = computed(() => props.resumes.length > 0)
-const canApply = computed(() => hasResumes.value && selectedResumeId.value && !props.job?.isApplied)
-const locationLabel = computed(() => [props.job?.provinceName, props.job?.cityName].filter(Boolean).join(' / ') || '地点待定')
+const isClosed = computed(() => props.job?.status === 'CLOSED')
+const canChooseResume = computed(() => !props.job?.isApplied && !isClosed.value)
+const canApply = computed(() => hasResumes.value && selectedResumeId.value && !props.job?.isApplied && !isClosed.value)
+const locationLabel = computed(() => formatShortLocation(props.job?.provinceName, props.job?.cityName))
 const workModeLabel = computed(() => workModeMap[props.job?.workMode] || props.job?.workMode || '待沟通')
 const durationLabel = computed(() => durationMap[props.job?.durationType] || props.job?.durationType || '时长待定')
-const skillList = computed(() => parseSkills(props.job?.requiredSkills?.length ? props.job?.requiredSkills : props.job?.requiredSkillsJson))
+const tagSummary = computed(() => getTagSummary(props.job?.tags?.length ? props.job.tags : props.job?.requiredSkills?.length ? props.job.requiredSkills : props.job?.requiredSkillsJson))
+const applyLabel = computed(() => {
+  if (props.job?.isApplied) return '已投递'
+  if (isClosed.value) return '岗位已关闭'
+  return '立即投递'
+})
+const actionHint = computed(() => {
+  if (isClosed.value) return '该岗位已关闭，可继续查看详情和收藏，但不能投递。'
+  if (props.job?.isApplied) return '当前岗位已投递，如已撤回会重新显示投递入口。'
+  if (!hasResumes.value) return '请先在简历中心创建简历版本。'
+  return '投递时将使用当前选中的简历版本。'
+})
 </script>
 
 <style scoped>
@@ -135,8 +138,9 @@ const skillList = computed(() => parseSkills(props.job?.requiredSkills?.length ?
 .meta-grid article {
   padding: 24px;
   border-radius: 24px;
-  background: rgba(255, 252, 247, 0.95);
-  box-shadow: 0 14px 28px rgba(151, 110, 54, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(106, 122, 255, 0.14);
+  box-shadow: 0 14px 28px rgba(17, 33, 84, 0.08);
 }
 
 .hero {
@@ -152,7 +156,7 @@ const skillList = computed(() => parseSkills(props.job?.requiredSkills?.length ?
 
 .hero p {
   margin: 12px 0 0;
-  color: #866846;
+  color: var(--muted);
 }
 
 .hero-side,
@@ -170,7 +174,7 @@ const skillList = computed(() => parseSkills(props.job?.requiredSkills?.length ?
 }
 
 .meta-grid span {
-  color: #8b6d4a;
+  color: var(--muted);
 }
 
 .meta-grid strong {
@@ -180,7 +184,7 @@ const skillList = computed(() => parseSkills(props.job?.requiredSkills?.length ?
 
 .resume-tip {
   margin: 12px 0;
-  color: #8b6d4a;
+  color: var(--muted);
 }
 
 @media (max-width: 960px) {

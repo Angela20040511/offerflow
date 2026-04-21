@@ -6,6 +6,7 @@ import com.offerflow.dto.CandidateQueryDTO;
 import com.offerflow.dto.CandidateStageUpdateDTO;
 import com.offerflow.dto.HrNoteSaveDTO;
 import com.offerflow.dto.HrReviewScoreDTO;
+import com.offerflow.entity.Application;
 import com.offerflow.entity.Resume;
 import com.offerflow.exception.BusinessException;
 import com.offerflow.mapper.ApplicationMapper;
@@ -24,6 +25,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CandidateService {
+    private static final List<String> HR_ALLOWED_STAGES = List.of("SCREENING", "INTERVIEW", "OFFER", "REJECTED");
+
     private final ApplicationMapper applicationMapper;
     private final ResumeMapper resumeMapper;
 
@@ -33,8 +36,7 @@ public class CandidateService {
         params.put("keyword", query.getKeyword());
         params.put("subsidiaryId", query.getSubsidiaryId());
         params.put("jobId", query.getJobId());
-        params.put("school", query.getSchool());
-        params.put("major", query.getMajor());
+        params.put("educationLevel", query.getEducationLevel());
         params.put("stage", query.getStage());
         params.put("scoreMin", query.getScoreMin());
         params.put("scoreMax", query.getScoreMax());
@@ -60,6 +62,16 @@ public class CandidateService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateCandidateStage(CandidateStageUpdateDTO request) {
         SecurityUtils.requireRole("HR");
+        Application application = applicationMapper.selectById(request.getApplicationId());
+        if (application == null) {
+            throw new BusinessException(404, "投递记录不存在");
+        }
+        if ("WITHDRAWN".equals(application.getStage())) {
+            throw new BusinessException(400, "候选人已撤回，无法继续处理");
+        }
+        if (!HR_ALLOWED_STAGES.contains(request.getStage())) {
+            throw new BusinessException(400, "当前阶段不允许由 HR 手动设置");
+        }
         return applicationMapper.updateApplicationStage(request.getApplicationId(), request.getStage()) > 0;
     }
 
@@ -72,7 +84,19 @@ public class CandidateService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateReviewScore(HrReviewScoreDTO request) {
         SecurityUtils.requireRole("HR");
-        return applicationMapper.updateHrReview(request.getApplicationId(), request.getHrReviewScore(), request.getHrReviewStatus(), request.getHrNote()) > 0;
+        Application application = applicationMapper.selectById(request.getApplicationId());
+        if (application == null) {
+            throw new BusinessException(404, "投递记录不存在");
+        }
+        if ("WITHDRAWN".equals(application.getStage())) {
+            throw new BusinessException(400, "候选人已撤回，无法继续处理");
+        }
+        return applicationMapper.updateHrReview(
+                request.getApplicationId(),
+                request.getHrReviewScore(),
+                request.getHrReviewStatus(),
+                request.getHrNote()
+        ) > 0;
     }
 
     public Map<String, Object> matchScore(Long applicationId) {
@@ -83,10 +107,10 @@ public class CandidateService {
         }
         Resume resume = resumeMapper.selectById(asLong(detail.get("resumeId")));
         Map<String, Object> basicInfo = new LinkedHashMap<>();
-        basicInfo.put("major", detail.getOrDefault("major", ""));
         if (resume != null) {
             basicInfo.putAll(JsonUtils.readObject(resume.getBasicInfoJson()));
         }
+        basicInfo.putIfAbsent("major", extractEducationMajor(stringValue(detail.get("educationJson"))));
         return MatchScoreUtil.buildDetail(
                 stringValue(detail.get("jobTitle")),
                 stringValue(detail.get("categoryName")),
@@ -122,5 +146,16 @@ public class CandidateService {
 
     private String stringValue(Object value) {
         return value == null ? null : String.valueOf(value);
+    }
+
+    private String extractEducationMajor(String educationJson) {
+        List<Map<String, Object>> rows = JsonUtils.readObjectList(educationJson);
+        for (Map<String, Object> row : rows) {
+            Object major = row.get("major");
+            if (major != null && !String.valueOf(major).isBlank()) {
+                return String.valueOf(major);
+            }
+        }
+        return "";
     }
 }

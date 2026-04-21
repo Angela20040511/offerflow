@@ -25,6 +25,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ApplicationService {
+    private static final String STAGE_APPLIED = "APPLIED";
+    private static final String STAGE_WITHDRAWN = "WITHDRAWN";
+
     private final ApplicationMapper applicationMapper;
     private final FavoriteMapper favoriteMapper;
     private final ResumeMapper resumeMapper;
@@ -63,9 +66,6 @@ public class ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> apply(ApiModels.ApplicationCreateRequest request) {
         Long userId = SecurityUtils.currentUserId();
-        if (applicationMapper.selectByUserIdAndJobId(userId, request.getJobId()) != null) {
-            throw new BusinessException(409, "该岗位已投递，请勿重复提交");
-        }
         Resume resume = resumeMapper.selectById(request.getResumeId());
         if (resume == null || !resume.getUserId().equals(userId)) {
             throw new BusinessException(404, "简历不存在或无权使用");
@@ -74,6 +74,12 @@ public class ApplicationService {
         if (job == null || !"OPEN".equals(job.getStatus())) {
             throw new BusinessException(404, "岗位不存在或已停止招聘");
         }
+
+        Application existing = applicationMapper.selectByUserIdAndJobId(userId, request.getJobId());
+        if (existing != null && !STAGE_WITHDRAWN.equals(existing.getStage())) {
+            throw new BusinessException(409, "该岗位已投递，请勿重复提交");
+        }
+
         Map<String, Object> basicInfo = JsonUtils.readObject(resume.getBasicInfoJson());
         Map<String, Object> matchDetail = MatchScoreUtil.buildDetail(
                 job.getTitle(),
@@ -86,16 +92,24 @@ public class ApplicationService {
                 JsonUtils.readStringList(resume.getSkillsJson())
         );
         Integer systemScore = (Integer) matchDetail.get("totalScore");
-        Application application = Application.builder()
-                .userId(userId)
-                .jobId(request.getJobId())
-                .resumeId(request.getResumeId())
-                .stage("APPLIED")
-                .matchScore(systemScore)
-                .systemMatchScore(systemScore)
-                .build();
-        applicationMapper.insertApplication(application);
-        Application saved = applicationMapper.selectById(application.getId());
+
+        Application saved;
+        if (existing != null) {
+            applicationMapper.reapplyApplication(existing.getId(), request.getResumeId(), systemScore, systemScore);
+            saved = applicationMapper.selectById(existing.getId());
+        } else {
+            Application application = Application.builder()
+                    .userId(userId)
+                    .jobId(request.getJobId())
+                    .resumeId(request.getResumeId())
+                    .stage(STAGE_APPLIED)
+                    .matchScore(systemScore)
+                    .systemMatchScore(systemScore)
+                    .build();
+            applicationMapper.insertApplication(application);
+            saved = applicationMapper.selectById(application.getId());
+        }
+
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("applicationId", saved.getId());
         result.put("stage", saved.getStage());

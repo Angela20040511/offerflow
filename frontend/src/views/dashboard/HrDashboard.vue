@@ -2,45 +2,39 @@
   <PageFrame title="招聘概览" desc="统一查看集团各子公司的开放岗位、新增投递与候选人进展。">
     <StatsPanels :items="summaryItems" />
 
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-card>
-          <template #header>最新投递</template>
-          <el-table :data="overview.latestApplications || []" stripe>
-            <el-table-column prop="candidateName" label="候选人姓名" min-width="140" />
-            <el-table-column prop="jobTitle" label="岗位" min-width="160" />
-            <el-table-column prop="subsidiaryName" label="子公司" min-width="180" />
-            <el-table-column prop="businessLine" label="业务线" min-width="140" />
-            <el-table-column prop="stage" label="阶段" width="110">
-              <template #default="scope">
-                <StatusTag :status="scope.row.stage" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="applyTime" label="投递时间" min-width="170" />
-          </el-table>
-        </el-card>
-      </el-col>
+    <section class="dashboard-grid">
+      <el-card class="top-card">
+        <template #header>最新投递</template>
+        <el-table :data="overview.latestApplications || []" stripe>
+          <el-table-column prop="candidateName" label="候选人姓名" min-width="140" />
+          <el-table-column prop="jobTitle" label="岗位" min-width="160" />
+          <el-table-column prop="subsidiaryName" label="子公司" min-width="180" />
+          <el-table-column prop="businessLine" label="业务线" min-width="140" />
+          <el-table-column prop="stage" label="阶段" width="110">
+            <template #default="scope">
+              <StatusTag :status="scope.row.stage" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="applyTime" label="投递时间" min-width="170" />
+        </el-table>
+      </el-card>
 
-      <el-col :span="6">
-        <el-card>
-          <template #header>各子公司开放岗位</template>
-          <el-table :data="overview.subsidiaryJobDistribution || []" stripe>
-            <el-table-column prop="name" label="子公司" min-width="180" />
-            <el-table-column prop="value" label="岗位数" width="110" />
-          </el-table>
-        </el-card>
-      </el-col>
+      <el-card class="bottom-card">
+        <template #header>各子公司开放岗位</template>
+        <el-table :data="overview.subsidiaryJobDistribution || []" stripe>
+          <el-table-column prop="name" label="子公司" min-width="180" />
+          <el-table-column prop="value" label="岗位数" width="110" />
+        </el-table>
+      </el-card>
 
-      <el-col :span="6">
-        <el-card>
-          <template #header>各子公司新增投递</template>
-          <el-table :data="overview.subsidiaryApplicationDistribution || []" stripe>
-            <el-table-column prop="name" label="子公司" min-width="180" />
-            <el-table-column prop="value" label="投递数" width="110" />
-          </el-table>
-        </el-card>
-      </el-col>
-    </el-row>
+      <el-card class="bottom-card">
+        <template #header>各子公司新增投递</template>
+        <el-table :data="overview.subsidiaryApplicationDistribution || []" stripe>
+          <el-table-column prop="name" label="子公司" min-width="180" />
+          <el-table-column prop="value" label="投递数" width="110" />
+        </el-table>
+      </el-card>
+    </section>
   </PageFrame>
 </template>
 
@@ -62,3 +56,29 @@ const summaryItems = computed(() => [
 
 onMounted(() => store.dispatch('user/fetchHrOverview'))
 </script>
+
+<style scoped>
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.top-card {
+  grid-column: 1 / -1;
+}
+
+.bottom-card {
+  min-width: 0;
+}
+
+@media (max-width: 1080px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-card {
+    grid-column: auto;
+  }
+}
+</style>

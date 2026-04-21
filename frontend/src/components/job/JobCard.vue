@@ -7,8 +7,8 @@
       </div>
       <div class="head-actions">
         <StatusTag mode="job" :status="job.status" />
-        <el-tag v-if="job.isApplied" type="success" effect="light">已投递</el-tag>
-        <el-tag v-if="job.isFavorite" type="warning" effect="light">已收藏</el-tag>
+        <StatusTag v-if="job.isApplied" :status="'APPLIED'" />
+        <StatusTag v-if="job.isFavorite" :status="'FAVORITE'" label="已收藏" />
       </div>
     </div>
 
@@ -21,8 +21,9 @@
 
     <div class="salary">{{ salaryLabel }}</div>
 
-    <div v-if="normalizedSkills.length" class="skill-list">
-      <el-tag v-for="tag in normalizedSkills" :key="tag" effect="plain">{{ tag }}</el-tag>
+    <div v-if="tagSummary.visible.length" class="skill-list">
+      <el-tag v-for="tag in tagSummary.visible" :key="tag" effect="plain">{{ tag }}</el-tag>
+      <el-tag v-if="tagSummary.extra" effect="plain">+{{ tagSummary.extra }}</el-tag>
     </div>
 
     <div class="action-row">
@@ -37,6 +38,7 @@
 <script setup>
 import { computed } from 'vue'
 import StatusTag from '@/components/common/StatusTag.vue'
+import { formatShortLocation, getTagSummary } from '@/utils/job'
 
 const props = defineProps({
   job: { type: Object, required: true },
@@ -60,24 +62,9 @@ const durationMap = {
   FULL_TIME: '校招全职'
 }
 
-const parseSkills = (value) => {
-  if (Array.isArray(value)) {
-    return value
-  }
-  if (typeof value === 'string' && value.trim()) {
-    try {
-      const parsed = JSON.parse(value)
-      return Array.isArray(parsed) ? parsed : []
-    } catch {
-      return []
-    }
-  }
-  return []
-}
-
 const displayGroupName = computed(() => props.job.groupName || props.groupLabel)
-const normalizedSkills = computed(() => parseSkills(props.job.requiredSkills?.length ? props.job.requiredSkills : props.job.requiredSkillsJson))
-const locationLabel = computed(() => [props.job.provinceName, props.job.cityName].filter(Boolean).join(' / ') || '地点待定')
+const tagSummary = computed(() => getTagSummary(props.job.tags?.length ? props.job.tags : props.job.requiredSkills?.length ? props.job.requiredSkills : props.job.requiredSkillsJson))
+const locationLabel = computed(() => formatShortLocation(props.job.provinceName, props.job.cityName))
 const workModeLabel = computed(() => workModeMap[props.job.workMode] || props.job.workMode || '待沟通')
 const durationLabel = computed(() => durationMap[props.job.durationType] || props.job.durationType || '时长待定')
 const salaryLabel = computed(() => `${props.job.salaryMin ?? '--'}-${props.job.salaryMax ?? '--'} 元/天`)
@@ -88,19 +75,19 @@ const salaryLabel = computed(() => `${props.job.salaryMin ?? '--'}-${props.job.s
   padding: 24px;
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(226, 209, 187, 0.8);
-  box-shadow: 0 12px 28px rgba(144, 104, 49, 0.1);
+  border: 1px solid rgba(106, 122, 255, 0.14);
+  box-shadow: 0 14px 28px rgba(17, 33, 84, 0.08);
   display: grid;
   gap: 18px;
 }
 
 .job-card.compact {
-  gap: 14px;
+  min-width: 320px;
 }
 
 .job-card.selected {
-  border-color: rgba(47, 104, 216, 0.42);
-  box-shadow: 0 16px 30px rgba(47, 104, 216, 0.12);
+  border-color: rgba(76, 99, 255, 0.42);
+  box-shadow: 0 16px 30px rgba(76, 99, 255, 0.14);
 }
 
 .card-head,
@@ -114,12 +101,12 @@ const salaryLabel = computed(() => `${props.job.salaryMin ?? '--'}-${props.job.s
 .title-block h3 {
   margin: 0;
   font-size: 1.35rem;
-  color: #20242b;
+  color: var(--text);
 }
 
 .title-block p {
   margin: 10px 0 0;
-  color: #7d6543;
+  color: var(--muted);
 }
 
 .head-actions,
@@ -131,12 +118,12 @@ const salaryLabel = computed(() => `${props.job.salaryMin ?? '--'}-${props.job.s
 }
 
 .meta-list {
-  color: #8b6d4a;
+  color: var(--muted);
 }
 
 .salary {
   font-size: 1.6rem;
-  color: #2958d9;
+  color: var(--primary);
   font-weight: 700;
 }
 

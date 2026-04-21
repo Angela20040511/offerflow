@@ -18,4 +18,5 @@ public interface ResumeMapper {
     int setDefaultById(@Param("id") Long id);
     int deleteById(@Param("id") Long id);
     long countByUserId(@Param("userId") Long userId);
+    long countApplicationsByResumeId(@Param("resumeId") Long resumeId);
 }

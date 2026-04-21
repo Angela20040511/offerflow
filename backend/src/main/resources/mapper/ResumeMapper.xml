@@ -142,4 +142,10 @@
         SELECT COUNT(1) FROM resume WHERE user_id = #{userId}
     </select>
 
+    <select id="countApplicationsByResumeId" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE resume_id = #{resumeId}
+    </select>
+
 </mapper>

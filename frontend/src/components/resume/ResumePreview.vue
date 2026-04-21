@@ -3,7 +3,7 @@
     <header class="preview-head">
       <div>
         <h2>{{ displayName }}</h2>
-        <p>{{ careerDirection }}</p>
+        <p>{{ [educationLevel, gender].filter(Boolean).join(' / ') || '学历与性别待补充' }}</p>
       </div>
       <div class="contact">
         <span>{{ phone }}</span>
@@ -15,20 +15,20 @@
       <h3>教育经历</h3>
       <article v-for="(item, index) in normalizedResume.educationList" :key="index">
         <strong>{{ [item.school, item.major].filter(Boolean).join(' / ') || '教育信息待补充' }}</strong>
-        <p>{{ [item.degree, formatRange(item.startDate, item.endDate)].filter(Boolean).join(' / ') || '时间待补充' }}</p>
-        <p v-if="item.highlight">{{ item.highlight }}</p>
+        <p>{{ [item.educationStage, formatRange(item.startDate, item.endDate)].filter(Boolean).join(' / ') || '时间待补充' }}</p>
+        <p v-if="item.courses">{{ item.courses }}</p>
       </article>
       <p v-if="!normalizedResume.educationList.length" class="empty-text">暂无教育经历</p>
     </section>
 
     <section>
-      <h3>实习经历</h3>
+      <h3>工作经历</h3>
       <article v-for="(item, index) in normalizedResume.experienceList" :key="index">
-        <strong>{{ [item.company, item.position].filter(Boolean).join(' / ') || '实习信息待补充' }}</strong>
-        <p>{{ [formatRange(item.startDate, item.endDate), item.location].filter(Boolean).join(' / ') || '时间待补充' }}</p>
+        <strong>{{ [item.company, item.position].filter(Boolean).join(' / ') || '工作信息待补充' }}</strong>
+        <p>{{ [item.employmentType, formatRange(item.startDate, item.endDate)].filter(Boolean).join(' / ') || '时间待补充' }}</p>
         <p v-if="item.content">{{ item.content }}</p>
       </article>
-      <p v-if="!normalizedResume.experienceList.length" class="empty-text">暂无实习经历</p>
+      <p v-if="!normalizedResume.experienceList.length" class="empty-text">暂无工作经历</p>
     </section>
 
     <section>
@@ -65,7 +65,8 @@ const profile = computed(() => normalizedResume.value.basicInfo || {})
 const skillList = computed(() => [...normalizedResume.value.skills.jobSkills, ...normalizedResume.value.skills.customSkills])
 const templateClass = computed(() => `template-${normalizedResume.value.templateCode || 'classic'}`)
 const displayName = computed(() => profile.value.name || '未填写姓名')
-const careerDirection = computed(() => profile.value.careerDirection || '求职方向待补充')
+const educationLevel = computed(() => profile.value.educationLevel || '')
+const gender = computed(() => profile.value.gender || '')
 const phone = computed(() => profile.value.phone || '未填写手机')
 const email = computed(() => profile.value.email || '未填写邮箱')
 </script>
@@ -75,22 +76,22 @@ const email = computed(() => profile.value.email || '未填写邮箱')
   min-height: 100%;
   padding: 24px;
   border-radius: 24px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.94);
   display: grid;
   gap: 20px;
 }
 
 .template-classic {
-  border-top: 8px solid #2958d9;
+  border-top: 8px solid var(--primary);
 }
 
 .template-fresh {
-  background: linear-gradient(180deg, #f8fffb 0%, #ffffff 100%);
-  border-left: 8px solid #34a37a;
+  background: linear-gradient(180deg, rgba(242, 248, 255, 0.96) 0%, rgba(255, 255, 255, 0.96) 100%);
+  border-left: 8px solid #23b4ff;
 }
 
 .template-sharp {
-  background: linear-gradient(135deg, #20242b 0%, #2f3640 100%);
+  background: linear-gradient(160deg, #12224b 0%, #1c325f 100%);
   color: #fff;
 }
 
@@ -113,6 +114,6 @@ section h3 {
 }
 
 .empty-text {
-  color: #866846;
+  color: var(--muted);
 }
 </style>

@@ -3,30 +3,40 @@ import { ElMessage } from 'element-plus'
 import HomeFrame from '@/components/layout/HomeFrame.vue'
 import store from '@/store'
 import { ROLE } from '@/constants/role'
-import { getToken, clearToken } from '@/utils/auth'
+import { getToken } from '@/utils/auth'
 
 const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', name: 'LoginView', component: () => import('@/views/login/LoginView.vue'), meta: { title: '\u767b\u5f55', hiddenTab: true } },
-  { path: '/register', name: 'RegisterView', component: () => import('@/views/login/RegisterView.vue'), meta: { title: '\u6ce8\u518c', hiddenTab: true } },
+  { path: '/', name: 'LandingView', component: () => import('@/views/public/LandingView.vue'), meta: { title: 'OfferFlow', hiddenTab: true } },
+  { path: '/login', name: 'LoginView', component: () => import('@/views/login/LoginView.vue'), meta: { title: '登录', hiddenTab: true } },
+  { path: '/register', name: 'RegisterView', component: () => import('@/views/login/RegisterView.vue'), meta: { title: '注册', hiddenTab: true } },
   {
     path: '/',
     component: HomeFrame,
-    meta: { requiresAuth: true, title: '\u9996\u9875', hiddenTab: true },
+    meta: { requiresAuth: true, title: '首页', hiddenTab: true },
     children: [
-      { path: 'applicant/dashboard', name: 'ApplicantDashboard', component: () => import('@/views/dashboard/ApplicantDashboard.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u9996\u9875', keepAlive: true } },
-      { path: 'applicant/jobs', name: 'JobCenterView', component: () => import('@/views/job/JobCenterView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u5c97\u4f4d\u4e2d\u5fc3', keepAlive: true } },
-      { path: 'applicant/jobs/:id', name: 'JobDetailView', component: () => import('@/views/job/JobDetailView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u5c97\u4f4d\u8be6\u60c5', keepAlive: true } },
-      { path: 'applicant/resume', name: 'ResumeCenterView', component: () => import('@/views/resume/ResumeCenterView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u7b80\u5386\u4e2d\u5fc3', keepAlive: true } },
-      { path: 'applicant/applications', name: 'MyApplicationsView', component: () => import('@/views/application/MyApplicationsView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u6211\u7684\u6295\u9012', keepAlive: true } },
-      { path: 'applicant/favorites', name: 'MyFavoritesView', component: () => import('@/views/application/MyFavoritesView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u6211\u7684\u6536\u85cf', keepAlive: true } },
-      { path: 'applicant/guide', name: 'GuideCenterView', component: () => import('@/views/guide/GuideCenterView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '\u5e94\u8058\u6307\u5357', keepAlive: true } },
-      { path: 'hr/dashboard', name: 'HrDashboard', component: () => import('@/views/dashboard/HrDashboard.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u62db\u8058\u6982\u89c8', keepAlive: true } },
-      { path: 'hr/jobs', name: 'HrJobManageView', component: () => import('@/views/hr/HrJobManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u5c97\u4f4d\u7ba1\u7406', keepAlive: true } },
-      { path: 'hr/candidates', name: 'HrCandidateManageView', component: () => import('@/views/hr/HrCandidateManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u5019\u9009\u4eba\u7ba1\u7406', keepAlive: true } },
-      { path: 'hr/applications', name: 'HrApplicationManageView', component: () => import('@/views/hr/HrApplicationManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u6295\u9012\u7ba1\u7406', keepAlive: true } },
-      { path: 'hr/review/:id', name: 'HrResumeReviewView', component: () => import('@/views/hr/HrResumeReviewView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u7b80\u5386\u8bc4\u5ba1', keepAlive: true } },
-      { path: 'hr/statistics', name: 'HrStatisticsView', component: () => import('@/views/hr/HrStatisticsView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '\u7edf\u8ba1\u5206\u6790', keepAlive: true } }
+      { path: 'applicant/dashboard', name: 'ApplicantDashboard', component: () => import('@/views/dashboard/ApplicantDashboard.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '首页', keepAlive: true } },
+      { path: 'applicant/jobs', name: 'JobCenterView', component: () => import('@/views/job/JobCenterView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '岗位中心', keepAlive: true } },
+      { path: 'applicant/jobs/:id', name: 'JobDetailView', component: () => import('@/views/job/JobDetailView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '岗位详情', keepAlive: true } },
+      {
+        path: 'applicant/resume',
+        name: 'ResumeCenterView',
+        component: () => import('@/views/resume/ResumeCenterView.vue'),
+        meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '简历中心', keepAlive: true },
+        children: [
+          { path: '', redirect: '/applicant/resume/editor' },
+          { path: 'editor', name: 'ResumeEditorView', component: () => import('@/views/resume/ResumeEditorView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '简历中心-编辑', keepAlive: true } },
+          { path: 'pdf', name: 'ResumePdfView', component: () => import('@/views/resume/ResumePdfView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '简历中心-PDF', keepAlive: true } }
+        ]
+      },
+      { path: 'applicant/applications', name: 'MyApplicationsView', component: () => import('@/views/application/MyApplicationsView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '我的投递', keepAlive: true } },
+      { path: 'applicant/favorites', name: 'MyFavoritesView', component: () => import('@/views/application/MyFavoritesView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '我的收藏', keepAlive: true } },
+      { path: 'applicant/guide', name: 'GuideCenterView', component: () => import('@/views/guide/GuideCenterView.vue'), meta: { requiresAuth: true, role: ROLE.APPLICANT, title: '应聘指南', keepAlive: true } },
+      { path: 'hr/dashboard', name: 'HrDashboard', component: () => import('@/views/dashboard/HrDashboard.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '招聘概览', keepAlive: true } },
+      { path: 'hr/jobs', name: 'HrJobManageView', component: () => import('@/views/hr/HrJobManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '岗位管理', keepAlive: true } },
+      { path: 'hr/candidates', name: 'HrCandidateManageView', component: () => import('@/views/hr/HrCandidateManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '候选人管理', keepAlive: true } },
+      { path: 'hr/applications', name: 'HrApplicationManageView', component: () => import('@/views/hr/HrApplicationManageView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '投递管理', keepAlive: true } },
+      { path: 'hr/review/:id', name: 'HrResumeReviewView', component: () => import('@/views/hr/HrResumeReviewView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '简历评审', keepAlive: true } },
+      { path: 'hr/statistics', name: 'HrStatisticsView', component: () => import('@/views/hr/HrStatisticsView.vue'), meta: { requiresAuth: true, role: ROLE.HR, title: '统计分析', keepAlive: true } }
     ]
   }
 ]
@@ -48,8 +58,9 @@ router.beforeEach(async (to, from, next) => {
   if (token && !profile) {
     try {
       await store.dispatch('user/fetchProfile')
-    } catch (error) {
-      clearToken()
+    } catch {
+      store.commit('user/clearUser')
+      store.commit('tabs/resetTabs')
       next('/login')
       return
     }
@@ -67,7 +78,19 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach((to) => {
-  store.commit('tabs/addTab', to)
+  const tabRoute = [...to.matched].reverse().find((item) => item.meta?.title && !item.meta?.hiddenTab)
+  const target = tabRoute
+    ? {
+        fullPath: to.fullPath,
+        name: to.name,
+        meta: {
+          ...tabRoute.meta,
+          title: to.meta?.title || tabRoute.meta.title,
+          keepAlive: Boolean(to.meta?.keepAlive || tabRoute.meta.keepAlive)
+        }
+      }
+    : to
+  store.commit('tabs/addTab', target)
   store.commit('tabs/setActive', to.fullPath)
 })
 

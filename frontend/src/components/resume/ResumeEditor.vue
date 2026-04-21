@@ -22,7 +22,7 @@ const props = defineProps({
 })
 
 watchEffect(() => {
-  props.resume.basicInfo ||= { name: '', phone: '', email: '', school: '', major: '', careerDirection: '' }
+  props.resume.basicInfo ||= { name: '', phone: '', email: '', educationLevel: '', gender: '' }
   props.resume.educationList ||= []
   props.resume.experienceList ||= []
   props.resume.projectList ||= []

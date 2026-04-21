@@ -1,13 +1,13 @@
 <template>
   <div class="form-block">
     <div class="block-head">
-      <h3>实习经历</h3>
-      <el-button @click="addItem">新增实习经历</el-button>
+      <h3>工作经历</h3>
+      <el-button @click="addItem">新增工作经历</el-button>
     </div>
 
     <div v-for="(item, index) in model" :key="index" class="entry-card">
       <div class="entry-head">
-        <strong>实习经历 {{ index + 1 }}</strong>
+        <strong>工作经历 {{ index + 1 }}</strong>
         <el-button link type="danger" @click="removeItem(index)">删除</el-button>
       </div>
       <el-form label-position="top" class="grid">
@@ -17,14 +17,16 @@
         <el-form-item label="岗位">
           <el-input v-model="item.position" />
         </el-form-item>
+        <el-form-item label="工作类型">
+          <el-select v-model="item.employmentType" placeholder="请选择工作类型">
+            <el-option v-for="option in employmentTypeOptions" :key="option" :label="option" :value="option" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="开始时间">
-          <el-input v-model="item.startDate" />
+          <el-date-picker v-model="item.startDate" type="month" value-format="YYYY-MM" placeholder="选择月份" />
         </el-form-item>
         <el-form-item label="结束时间">
-          <el-input v-model="item.endDate" />
-        </el-form-item>
-        <el-form-item label="地点">
-          <el-input v-model="item.location" />
+          <el-date-picker v-model="item.endDate" type="month" value-format="YYYY-MM" placeholder="选择月份" />
         </el-form-item>
         <el-form-item label="工作内容" class="full">
           <el-input v-model="item.content" type="textarea" :rows="4" />
@@ -35,6 +37,8 @@
 </template>
 
 <script setup>
+import { employmentTypeOptions } from '@/utils/resume'
+
 const props = defineProps({
   model: { type: Array, required: true }
 })
@@ -43,9 +47,9 @@ const addItem = () => {
   props.model.push({
     company: '',
     position: '',
+    employmentType: '',
     startDate: '',
     endDate: '',
-    location: '',
     content: ''
   })
 }
@@ -71,8 +75,8 @@ const removeItem = (index) => {
 .entry-card {
   padding: 18px;
   border-radius: 20px;
-  border: 1px solid rgba(223, 205, 182, 0.8);
-  background: #fff;
+  border: 1px solid rgba(116, 132, 255, 0.14);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .grid {
@@ -83,5 +87,11 @@ const removeItem = (index) => {
 
 .full {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

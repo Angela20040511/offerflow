@@ -2,7 +2,7 @@
   <div class="job-detail-view">
     <section class="hero">
       <h2>岗位详情</h2>
-      <p>查看集团岗位完整信息，并选择最合适的简历版本进行投递。</p>
+      <p>查看岗位完整信息，并选择最合适的简历版本进行投递。</p>
     </section>
 
     <JobDetailPanel v-if="job" :job="job" :resumes="resumes" @apply="handleApply" @favorite="handleFavorite" />
@@ -36,9 +36,9 @@ const handleApply = async ({ job, resumeId }) => {
 }
 
 const handleFavorite = async (payload) => {
-  await store.dispatch('user/toggleFavorite', payload)
+  const isFavorite = await store.dispatch('user/toggleFavorite', payload)
   await store.dispatch('job/fetchDetail', route.params.id)
-  ElMessage.success(payload.isFavorite ? '已取消收藏' : '岗位已收藏')
+  ElMessage.success(isFavorite ? '岗位已收藏' : '已取消收藏')
 }
 
 onMounted(load)
@@ -53,11 +53,12 @@ onMounted(load)
 .hero {
   padding: 28px;
   border-radius: 28px;
-  background: rgba(255, 252, 247, 0.95);
-  box-shadow: 0 14px 30px rgba(151, 110, 54, 0.12);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .hero p {
-  color: #866846;
+  color: var(--muted);
 }
 </style>

@@ -34,7 +34,7 @@
       </div>
 
       <div class="right-column">
-        <CanvasPdf :url="pdfUrl" />
+        <CanvasPdf :url="pdfUrl" empty-text="该候选人暂未上传 PDF 简历。" />
       </div>
     </div>
   </PageFrame>
@@ -62,13 +62,19 @@ const detail = ref(null)
 const matchScore = ref({})
 const pdfUrl = ref('')
 
+const withCacheBust = (url) => (url ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` : '')
+
 const load = async () => {
   const loadedDetail = await getCandidateDetailApi(route.params.id)
   detail.value = loadedDetail
   matchScore.value = await getMatchScoreApi(route.params.id)
   if (loadedDetail?.resumeId) {
-    const pdf = await getResumePdfApi(loadedDetail.resumeId)
-    pdfUrl.value = pdf?.pdfUrl || ''
+    try {
+      const pdf = await getResumePdfApi(loadedDetail.resumeId)
+      pdfUrl.value = withCacheBust(pdf?.pdfUrl || '')
+    } catch {
+      pdfUrl.value = ''
+    }
   } else {
     pdfUrl.value = ''
   }

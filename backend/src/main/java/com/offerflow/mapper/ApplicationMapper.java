@@ -15,6 +15,10 @@ public interface ApplicationMapper {
     long countMyApplicationPage(Map<String, Object> params);
     List<Map<String, Object>> selectMyApplicationPage(Map<String, Object> params);
     int withdrawApplication(@Param("id") Long id, @Param("userId") Long userId);
+    int reapplyApplication(@Param("id") Long id,
+                           @Param("resumeId") Long resumeId,
+                           @Param("matchScore") Integer matchScore,
+                           @Param("systemMatchScore") Integer systemMatchScore);
     long countHrApplicationPage(Map<String, Object> params);
     List<Map<String, Object>> selectHrApplicationPage(Map<String, Object> params);
     long countCandidatePage(Map<String, Object> params);
@@ -26,6 +30,7 @@ public interface ApplicationMapper {
                        @Param("hrReviewScore") Integer hrReviewScore,
                        @Param("hrReviewStatus") String hrReviewStatus,
                        @Param("hrNote") String hrNote);
+    long countByResumeId(@Param("resumeId") Long resumeId);
     long countApplicantApplications(@Param("userId") Long userId);
     long countApplicantInterview(@Param("userId") Long userId);
     long countByStage(@Param("stage") String stage);

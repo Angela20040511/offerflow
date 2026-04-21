@@ -5,7 +5,7 @@
         <el-select v-model="filters.subsidiaryId" clearable placeholder="筛选子公司" @change="applyFilter">
           <el-option v-for="item in subsidiaries" :key="item.id" :label="item.subsidiaryName" :value="item.id" />
         </el-select>
-        <el-switch v-model="filters.openOnly" active-text="只看招聘中岗位" @change="applyFilter" />
+        <el-switch v-model="filters.openOnly" active-text="只看招聘中" @change="applyFilter" />
       </div>
 
       <div class="job-list">
@@ -66,8 +66,9 @@ onMounted(async () => {
 .panel {
   padding: 28px;
   border-radius: 28px;
-  background: rgba(255, 252, 247, 0.95);
-  box-shadow: 0 14px 30px rgba(151, 110, 54, 0.12);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .toolbar {

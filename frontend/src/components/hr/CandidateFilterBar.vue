@@ -1,11 +1,12 @@
 <template>
   <div class="toolbar">
-    <el-input v-model="model.keyword" clearable placeholder="输入姓名、岗位或学校" @keyup.enter="$emit('search')" />
+    <el-input v-model="model.keyword" clearable placeholder="输入姓名、岗位或子公司" @keyup.enter="$emit('search')" />
     <el-select v-model="model.subsidiaryId" clearable filterable placeholder="筛选子公司" @change="$emit('search')">
       <el-option v-for="item in subsidiaries" :key="item.id" :label="item.subsidiaryName" :value="item.id" />
     </el-select>
-    <el-input v-model="model.school" clearable placeholder="学校" @keyup.enter="$emit('search')" />
-    <el-input v-model="model.major" clearable placeholder="专业" @keyup.enter="$emit('search')" />
+    <el-select v-model="model.educationLevel" clearable placeholder="筛选学历" @change="$emit('search')">
+      <el-option v-for="item in educationLevelOptions" :key="item" :label="item" :value="item" />
+    </el-select>
     <el-select v-model="model.stage" clearable placeholder="筛选阶段" @change="$emit('search')">
       <el-option v-for="item in stageOptions" :key="item.value" :label="item.label" :value="item.value" />
     </el-select>
@@ -20,6 +21,7 @@
 <script setup>
 import { ref } from 'vue'
 import { APPLICATION_STAGE_OPTIONS } from '@/constants/status'
+import { educationLevelOptions } from '@/utils/resume'
 
 const props = defineProps({
   model: { type: Object, required: true },
@@ -31,10 +33,10 @@ const stageOptions = APPLICATION_STAGE_OPTIONS
 const scoreRange = ref('')
 
 const scoreOptions = [
-  { label: '60 分以下', value: '0-59', min: 0, max: 59 },
-  { label: '60-79 分', value: '60-79', min: 60, max: 79 },
-  { label: '80-89 分', value: '80-89', min: 80, max: 89 },
-  { label: '90 分及以上', value: '90-100', min: 90, max: 100 }
+  { label: '60分以下', value: '0-59', min: 0, max: 59 },
+  { label: '60-79分', value: '60-79', min: 60, max: 79 },
+  { label: '80-89分', value: '80-89', min: 80, max: 89 },
+  { label: '90分及以上', value: '90-100', min: 90, max: 100 }
 ]
 
 const handleScoreChange = (value) => {
@@ -50,5 +52,17 @@ const handleScoreChange = (value) => {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+}
+
+@media (max-width: 1180px) {
+  .toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

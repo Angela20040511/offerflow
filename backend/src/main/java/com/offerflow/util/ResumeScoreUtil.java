@@ -17,13 +17,12 @@ public final class ResumeScoreUtil {
         score += hasText(basicInfo.get("name")) ? 12 : 0;
         score += hasText(basicInfo.get("phone")) ? 10 : 0;
         score += hasText(basicInfo.get("email")) ? 10 : 0;
-        score += hasText(basicInfo.get("school")) ? 12 : 0;
-        score += hasText(basicInfo.get("major")) ? 10 : 0;
-        score += hasText(basicInfo.get("intention")) ? 10 : 0;
+        score += hasText(basicInfo.get("educationLevel")) ? 12 : 0;
+        score += hasText(basicInfo.get("gender")) ? 8 : 0;
         score += !educationList.isEmpty() ? 12 : 0;
         score += !experienceList.isEmpty() ? 10 : 0;
         score += !projectList.isEmpty() ? 8 : 0;
-        score += !skillList.isEmpty() ? 4 : 0;
+        score += !skillList.isEmpty() ? 8 : 0;
         score += hasText(pdfUrl) ? 2 : 0;
         return Math.min(score, 100);
     }

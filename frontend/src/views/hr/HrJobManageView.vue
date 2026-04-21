@@ -44,6 +44,11 @@
             <el-option label="校招全职" value="FULL_TIME" />
           </el-select>
         </el-form-item>
+        <el-form-item label="岗位状态">
+          <el-select v-model="form.status">
+            <el-option v-for="item in jobStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="日薪下限"><el-input-number v-model="form.salaryMin" /></el-form-item>
         <el-form-item label="日薪上限"><el-input-number v-model="form.salaryMax" /></el-form-item>
         <el-form-item label="推荐技能" class="span-2">
@@ -71,6 +76,7 @@ import PaginationBar from '@/components/common/PaginationBar.vue'
 import HrJobTable from '@/components/hr/HrJobTable.vue'
 import HrJobToolbar from '@/components/hr/HrJobToolbar.vue'
 import PageFrame from '@/components/layout/PageFrame.vue'
+import { jobStatusOptions } from '@/constants/status'
 
 const store = useStore()
 const page = reactive({ list: [], total: 0 })

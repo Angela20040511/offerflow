@@ -14,20 +14,22 @@
         <el-form-item label="学校">
           <el-input v-model="item.school" />
         </el-form-item>
-        <el-form-item label="学历">
-          <el-input v-model="item.degree" />
+        <el-form-item label="教育阶段">
+          <el-select v-model="item.educationStage" placeholder="请选择教育阶段">
+            <el-option v-for="option in educationLevelOptions" :key="option" :label="option" :value="option" />
+          </el-select>
         </el-form-item>
         <el-form-item label="专业">
           <el-input v-model="item.major" />
         </el-form-item>
         <el-form-item label="开始时间">
-          <el-input v-model="item.startDate" placeholder="例如：2022.09" />
+          <el-date-picker v-model="item.startDate" type="month" value-format="YYYY-MM" placeholder="选择月份" />
         </el-form-item>
         <el-form-item label="结束时间">
-          <el-input v-model="item.endDate" placeholder="例如：2026.06" />
+          <el-date-picker v-model="item.endDate" type="month" value-format="YYYY-MM" placeholder="选择月份" />
         </el-form-item>
-        <el-form-item label="亮点补充" class="full">
-          <el-input v-model="item.highlight" type="textarea" :rows="3" />
+        <el-form-item label="主修课程" class="full">
+          <el-input v-model="item.courses" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
     </div>
@@ -35,6 +37,8 @@
 </template>
 
 <script setup>
+import { educationLevelOptions } from '@/utils/resume'
+
 const props = defineProps({
   model: { type: Array, required: true }
 })
@@ -42,11 +46,11 @@ const props = defineProps({
 const addItem = () => {
   props.model.push({
     school: '',
-    degree: '',
+    educationStage: '',
     major: '',
     startDate: '',
     endDate: '',
-    highlight: ''
+    courses: ''
   })
 }
 
@@ -71,8 +75,8 @@ const removeItem = (index) => {
 .entry-card {
   padding: 18px;
   border-radius: 20px;
-  border: 1px solid rgba(223, 205, 182, 0.8);
-  background: #fff;
+  border: 1px solid rgba(116, 132, 255, 0.14);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .grid {
@@ -83,5 +87,11 @@ const removeItem = (index) => {
 
 .full {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

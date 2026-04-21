@@ -1,20 +1,40 @@
 body {
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255, 185, 128, 0.35), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(94, 172, 124, 0.22), transparent 24%),
-    linear-gradient(160deg, #faf6ee 0%, #f2eadc 100%);
+    radial-gradient(circle at top left, rgba(93, 118, 255, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(35, 180, 255, 0.14), transparent 24%),
+    linear-gradient(160deg, #f6f8ff 0%, #edf2ff 100%);
 }
-.page-shell { display: flex; flex-direction: column; gap: 16px; }
-.page-title { font-size: 24px; font-weight: 700; }
-.page-desc { color: var(--muted); }
+
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.page-desc {
+  color: var(--muted);
+}
+
 .card-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.section-grid { display: grid; gap: 16px; }
+
+.section-grid {
+  display: grid;
+  gap: 16px;
+}
+
 @media (max-width: 768px) {
-  .hide-mobile { display: none !important; }
+  .hide-mobile {
+    display: none !important;
+  }
 }

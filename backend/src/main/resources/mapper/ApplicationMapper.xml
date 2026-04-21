@@ -24,8 +24,7 @@
         COALESCE(NULLIF(JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.name')), ''), u.username)
     </sql>
 
-    <sql id="SchoolExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.school'))</sql>
-    <sql id="MajorExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.major'))</sql>
+    <sql id="EducationLevelExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.educationLevel'))</sql>
     <sql id="EmailExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.email'))</sql>
     <sql id="PhoneExpr">JSON_UNQUOTE(JSON_EXTRACT(r.basic_info_json, '$.phone'))</sql>
 
@@ -37,8 +36,7 @@
         <include refid="CandidateNameExpr"/> AS candidateName,
         <include refid="EmailExpr"/> AS email,
         <include refid="PhoneExpr"/> AS phone,
-        <include refid="SchoolExpr"/> AS school,
-        <include refid="MajorExpr"/> AS major,
+        <include refid="EducationLevelExpr"/> AS educationLevel,
         s.group_name AS groupName,
         s.id AS subsidiaryId,
         s.subsidiary_name AS subsidiaryName,
@@ -54,6 +52,7 @@
         r.id AS resumeId,
         r.resume_name AS resumeName,
         r.pdf_url AS resumePdfUrl,
+        r.education_json AS educationJson,
         r.skills_json AS resumeSkillsJson,
         r.project_json AS projectJson,
         r.experience_json AS experienceJson,
@@ -205,6 +204,22 @@
           AND user_id = #{userId}
     </update>
 
+    <update id="reapplyApplication">
+        UPDATE application_record
+        SET
+            resume_id = #{resumeId},
+            stage = 'APPLIED',
+            hr_note = NULL,
+            match_score = #{matchScore},
+            system_match_score = #{systemMatchScore},
+            hr_review_score = NULL,
+            hr_review_status = NULL,
+            hr_review_time = NULL,
+            apply_time = NOW(),
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
     <select id="countHrApplicationPage" resultType="long">
         SELECT COUNT(1)
         <include refid="ApplicationJoinClause"/>
@@ -273,11 +288,8 @@
             <if test="jobId != null">
                 AND j.id = #{jobId}
             </if>
-            <if test="school != null and school != ''">
-                AND <include refid="SchoolExpr"/> LIKE CONCAT('%', #{school}, '%')
-            </if>
-            <if test="major != null and major != ''">
-                AND <include refid="MajorExpr"/> LIKE CONCAT('%', #{major}, '%')
+            <if test="educationLevel != null and educationLevel != ''">
+                AND <include refid="EducationLevelExpr"/> LIKE CONCAT('%', #{educationLevel}, '%')
             </if>
             <if test="stage != null and stage != ''">
                 AND app.stage = #{stage}
@@ -315,11 +327,8 @@
             <if test="jobId != null">
                 AND j.id = #{jobId}
             </if>
-            <if test="school != null and school != ''">
-                AND <include refid="SchoolExpr"/> LIKE CONCAT('%', #{school}, '%')
-            </if>
-            <if test="major != null and major != ''">
-                AND <include refid="MajorExpr"/> LIKE CONCAT('%', #{major}, '%')
+            <if test="educationLevel != null and educationLevel != ''">
+                AND <include refid="EducationLevelExpr"/> LIKE CONCAT('%', #{educationLevel}, '%')
             </if>
             <if test="stage != null and stage != ''">
                 AND app.stage = #{stage}
@@ -370,6 +379,12 @@
             update_time = NOW()
         WHERE id = #{applicationId}
     </update>
+
+    <select id="countByResumeId" resultType="long">
+        SELECT COUNT(1)
+        FROM application_record
+        WHERE resume_id = #{resumeId}
+    </select>
 
     <select id="countApplicantApplications" resultType="long">
         SELECT COUNT(1)

@@ -14,8 +14,7 @@ public class CandidateQueryDTO {
     private String keyword;
     private Long subsidiaryId;
     private Long jobId;
-    private String school;
-    private String major;
+    private String educationLevel;
     private String stage;
     private Integer scoreMin;
     private Integer scoreMax;

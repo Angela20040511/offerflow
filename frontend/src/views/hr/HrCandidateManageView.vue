@@ -1,5 +1,5 @@
 <template>
-  <PageFrame title="候选人管理" desc="按子公司、岗位阶段和匹配分统一管理集团候选人。">
+  <PageFrame title="候选人管理" desc="按子公司、阶段、学历和匹配分统一管理集团候选人。">
     <CandidateFilterBar :model="filters" :subsidiaries="subsidiaries" @search="load" @reset="reset" />
     <div class="table-wrap">
       <CandidateTable :data="list" @review="goReview" />
@@ -21,8 +21,7 @@ const router = useRouter()
 const filters = reactive({
   keyword: '',
   subsidiaryId: '',
-  school: '',
-  major: '',
+  educationLevel: '',
   stage: '',
   scoreMin: null,
   scoreMax: null
@@ -37,8 +36,7 @@ const reset = () => {
   Object.assign(filters, {
     keyword: '',
     subsidiaryId: '',
-    school: '',
-    major: '',
+    educationLevel: '',
     stage: '',
     scoreMin: null,
     scoreMax: null

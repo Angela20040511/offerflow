@@ -43,6 +43,10 @@ export const applicationStageOptions = [
   { label: '\u5df2\u64a4\u56de', value: APPLICATION_STAGE.WITHDRAWN }
 ]
 
+export const hrApplicationStageOptions = applicationStageOptions.filter(
+  (item) => ![APPLICATION_STAGE.APPLIED, APPLICATION_STAGE.WITHDRAWN].includes(item.value)
+)
+
 export const salaryRangeOptions = [
   { label: '150 \u5143/\u5929\u4ee5\u4e0b', value: '0-150', salaryMin: 0, salaryMax: 150 },
   { label: '150-180 \u5143/\u5929', value: '150-180', salaryMin: 150, salaryMax: 180 },
@@ -53,6 +57,7 @@ export const salaryRangeOptions = [
 
 export const JOB_STATUS_OPTIONS = jobStatusOptions
 export const APPLICATION_STAGE_OPTIONS = applicationStageOptions
+export const HR_APPLICATION_STAGE_OPTIONS = hrApplicationStageOptions
 export const JOB_STATUS_LABEL_MAP = jobStatusLabelMap
 export const APPLICATION_STAGE_LABEL_MAP = applicationStageLabelMap
 export const JOB_STATUS_LABELS = jobStatusLabelMap
